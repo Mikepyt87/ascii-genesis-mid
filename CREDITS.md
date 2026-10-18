@@ -11,3 +11,5 @@ Original ASCII Genesis additions include the puffer, bannerfish, spearfish, mora
 **GUITION** made the board. **Arduino_GFX/moononournation** and **ESPHome** document its panel register values and wiring; see [hardware references](HARDWARE.md). **Espressif** supplies ESP-IDF, device libraries, and flashing tools. The font is from **Adafruit GFX**, with its [BSD notice](preview/FONT-LICENSE.txt).
 
 Credits do not imply endorsement by the original projects.
+
+The surface sea monster adapts Asciiquarium’s original long-necked, looping-body drawing. Its two poses are in `preview/ocean-scenes.js`, under GPL-2.0-or-later. The compact boat, surfacing whale, spout, castles, and ruins are ASCII Genesis additions inspired by the original scene.

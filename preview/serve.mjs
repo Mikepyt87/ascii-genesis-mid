@@ -1,6 +1,6 @@
 import http from 'node:http';
 import fs from 'node:fs/promises';
-const files=new Map([['/',['preview.html','text/html']],['/ocean.js',['ocean.js','text/javascript']],['/font.js',['font.js','text/javascript']],['/fish-art.js',['../art/fish-art.js','text/javascript']]]);
+const files=new Map([['/',['preview.html','text/html']],['/ocean-scenes.js', ['ocean-scenes.js','text/javascript']], ['/ocean.js',['ocean.js','text/javascript']],['/font.js',['font.js','text/javascript']],['/fish-art.js',['../art/fish-art.js','text/javascript']]]);
 http.createServer(async(req,res)=>{
  const f=files.get(req.url);
  if(req.method!=='GET'||!f){res.writeHead(404);res.end();return;}

@@ -50,6 +50,8 @@ There are **28 colored creature and vehicle designs**, including the peacock man
 
 Tap the water for **Pause · New World · Parade · Settings**. The parade keeps all 28 designs in their original order, with six-second crossings and up to two creatures at a time. A full Mid parade takes **87 seconds (1 minute 27 seconds)**, then returns to the preserved ocean. The full names appear at the top right, with larger, brighter text from v0.1.5. Regular swimmers move at **9–18 logical pixels per second**, while the seabed scrolls at **3.6 logical pixels per second**. Mid draws a 320 × 320 scene and enlarges it evenly to the 480 × 480 screen, preserving the creatures' proportions.
 
+Surface stretches bring sailing boats, whales that surface and spout, and an occasional Nessie-like sea monster. Castles and ruins pass along the seabed. Bubbles rise from creatures or the seabed, with no more than two on screen at once. Surface visitors take turns, and the creature parade keeps its own clear view.
+
 ![ASCII Genesis Mid ocean](docs/preview.png)
 
 The image is a browser preview, not a photograph of the board.

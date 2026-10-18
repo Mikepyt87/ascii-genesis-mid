@@ -10,8 +10,8 @@ h1{font-size:26px;margin-bottom:5px}p{color:#9fb9be}canvas{display:block;width:m
 <canvas width="320" height="320" aria-label="Animated square ASCII ocean. Tap to reveal touch controls."></canvas>
 <div class="buttons"><button id="pause">Pause</button><button id="reset">New world</button><button id="parade">Parade</button><button id="settings">Settings</button></div>
 <p id="status" aria-live="polite">Browser preview · no board connection</p>
-<p class="note">The real board runs on USB power without a computer or internet. Wi-Fi setup is available on the board; this preview does not collect passwords. Mid v0.1.3 supports Wi-Fi updates from Settings.</p>
-<script src="fish-art.js"></script><script src="font.js"></script><script src="ocean.js"></script>
+<p class="note">The real board runs on USB power without a computer or internet. Wi-Fi setup is available on the board; this preview does not collect passwords. Mid v0.1.6 supports Wi-Fi updates from Settings.</p>
+<script src="fish-art.js"></script><script src="font.js"></script><script src="ocean-scenes.js"></script><script src="ocean.js"></script>
 <script>
 const api=globalThis.MiniAquarium,canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');
 let seed=crypto.getRandomValues(new Uint32Array(1))[0],ocean=new api.MiniOcean(AsciiquariumSprites,seed),screen=false,elapsed=0,until=8,last=0;

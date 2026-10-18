@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: '22'
       - run: node preview/check.mjs
-      - run: node tools/generate-assets.mjs --check
+      - run: node tools/generate-assets.mjs --check && node tools/generate-scenes.mjs --check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/policy-check.c -o /tmp/policy-check && /tmp/policy-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/wifi-check.c -o /tmp/mid-wifi-check && /tmp/mid-wifi-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/touch-check.c -o /tmp/mid-touch-check && /tmp/mid-touch-check

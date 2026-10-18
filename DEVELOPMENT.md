@@ -5,6 +5,7 @@ Use Node.js 20 or newer. No npm dependencies are required.
 ```text
 node preview/serve.mjs
 node preview/check.mjs
+node tools/generate-scenes.mjs --check
 node tools/generate-assets.mjs --check
 ```
 

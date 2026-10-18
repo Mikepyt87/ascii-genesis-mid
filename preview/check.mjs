@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import '../art/fish-art.js';
 import './font.js';
+import './ocean-scenes.js';
 import './ocean.js';
 const {MiniOcean,render,bandsClear,W,H,SWIM_BOTTOM}=globalThis.MiniAquarium;
 const sprites=globalThis.AsciiquariumSprites,ocean=new MiniOcean(sprites,4848);
@@ -29,3 +30,5 @@ const policy=fs.readFileSync(new URL('../firmware/main/update_policy.h',import.m
 assert.ok(policy.includes('guition-esp32-4848s040')&&policy.includes('mid-stable')&&!policy.includes('ascii-genesis-mini'));
 assert.ok(network.includes('ASCII-Genesis-Mid'));
 console.log('PASS: one simulated hour, square layout, all habitats, creature clearance, pause, controls, 28-creature parade, and board-specific wireless update policy.');
+
+const {checkScenes}=await import('./scenes-check.mjs');checkScenes(globalThis.MiniAquarium,sprites);

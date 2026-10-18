@@ -29,7 +29,7 @@ jobs:
           test "$GITHUB_REF" = refs/heads/main
           node -e 'if(!/^\d{1,5}\.\d{1,5}\.\d{1,5}$/.test(process.env.VERSION))process.exit(1)'
           printf '%s' "$VERSION" > firmware/release-version.txt
-      - run: node preview/check.mjs && node tools/generate-assets.mjs --check
+      - run: node preview/check.mjs && node tools/generate-assets.mjs --check && node tools/generate-scenes.mjs --check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/policy-check.c -o /tmp/policy-check && /tmp/policy-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/wifi-check.c -o /tmp/wifi-check && /tmp/wifi-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/touch-check.c -o /tmp/touch-check && /tmp/touch-check
