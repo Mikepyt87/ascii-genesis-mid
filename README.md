@@ -10,7 +10,7 @@ ASCII Genesis grew from **[Asciiquarium](https://github.com/cmatsuoka/asciiquari
 
 We call ASCII Genesis an **ocean**: its creatures travel through a scrolling world of changing terrain and habitats.
 
-**v0.1.4** brings consistent ocean wording to the device and guides, and prominent thanks to the projects that inspired it. Wi-Fi updates are available from Settings. The display, touch controls, and home Wi-Fi connection were checked on the owner's board. See [validation](VALIDATION.md) for checks performed.
+**v0.1.5** makes parade names 50% larger and brighter, with both full names at the top right. Wi-Fi updates are available from Settings. The display, touch controls, and home Wi-Fi connection were checked on the owner's board. See [validation](VALIDATION.md) for checks performed.
 
 ![ASCII Genesis Mid browser preview](docs/preview.png)
 

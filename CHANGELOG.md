@@ -1,5 +1,10 @@
 # Changes
 
+## 0.1.5
+
+- Makes parade names 50% larger and brighter in the top-right corner. Both full names fit beside the counter and above the creatures.
+- Preserves the original parade order, six-second crossings, two-creature limit, and existing parade duration.
+
 ## 0.1.4
 
 - Makes Asciiquarium and its creators, along with OpenGhost's display inspiration, prominent near the top of the GitHub README.
