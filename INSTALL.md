@@ -1,6 +1,6 @@
 # Install ASCII Genesis Mid
 
-This guide is for the **GUITION ESP32-4848S040, ESP32-S3 N16R8**. v0.1.2 was installed on the owner's board; display, touch, and home Wi-Fi connection were checked. See VALIDATION.md for the checks performed.
+This guide is for the **GUITION ESP32-4848S040, ESP32-S3 N16R8**. v0.1.3 was installed over Wi-Fi on the owner's board; the owner confirmed the aquarium returned, and its log confirmed the new version and home Wi-Fi reconnect. See VALIDATION.md for the checks performed.
 
 ## What you need
 
