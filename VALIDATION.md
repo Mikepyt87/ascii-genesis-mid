@@ -12,8 +12,8 @@
 | C touch decoder, parade, Wi-Fi status, timeout, and retry checks | Passed in v0.1.3 GitHub release build |
 | C update policy: board separation, versions, HTTPS asset path, digest and size | Passed in v0.1.3 GitHub release build |
 | Published manifest, app size, and SHA-256 | Passed; downloaded stable manifest, application, USB image, and source ZIP; USB app matches wireless app |
-| Physical wireless installation and restart | Passed; board fetched the live manifest, verified 1,112,960 bytes, restarted into v0.1.3, and rejoined home Wi-Fi; owner confirmed the aquarium returned |
-| Physical LCD display | Owner confirmed the aquarium appeared |
+| Physical wireless installation and restart | Passed; board fetched the live manifest, verified 1,112,960 bytes, restarted into v0.1.3, and rejoined home Wi-Fi; owner confirmed the ocean returned |
+| Physical LCD display | Owner confirmed the ocean appeared |
 | Physical GT911 reads and button alignment | Owner confirmed touch controls work in v0.1.1; serial log reports GT911 ID 911, 480 × 480, and touch presses |
 | Physical home Wi-Fi login and saved-network reconnect | v0.1.2 startup log confirms authentication, association, and an IP address from the home network |
 | 30-second startup validation and controlled restart | Passed; after running past validation, a reset loaded v0.1.3 from the new slot at 0x620000 without rollback; unplug/replug power test remains unperformed |

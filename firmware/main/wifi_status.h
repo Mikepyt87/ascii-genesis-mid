@@ -15,7 +15,7 @@ static inline const char *wifi_link_message(wifi_link_state_t state) {
         case LINK_SECURITY_FAILED:return "Router security unsupported - try WPA2";
         case LINK_TIMEOUT:return "Connection timed out - reopen Wi-Fi setup";
         case LINK_FAILED:return "Connection lost - retrying shortly";
-        default:return "Offline aquarium ready";
+        default:return "Offline ocean ready";
     }
 }
 static inline bool wifi_link_retry_due(wifi_link_state_t state,long long now,long long retry_at) {

@@ -1,8 +1,16 @@
 # ASCII Genesis Mid
 
-A touch-controlled ASCII aquarium for the **GUITION ESP32-4848S040**, with a **4-inch, 480 × 480 square screen**. This is the middle-size edition of ASCII Genesis, between the Mini and Raspberry Pi versions.
+A touch-controlled ASCII ocean for the **GUITION ESP32-4848S040**, with a **4-inch, 480 × 480 square screen**. This is the middle-size edition of ASCII Genesis, between the Mini and Raspberry Pi versions.
 
-**v0.1.3** adds Wi-Fi updates from Settings. The display, touch controls, and home Wi-Fi connection were checked on the owner's board. See [validation](VALIDATION.md) for checks performed.
+## With thanks to the projects that started it
+
+ASCII Genesis grew from **[Asciiquarium](https://github.com/cmatsuoka/asciiquarium)**, created by **Kirk Baucom**, with most original ASCII art credited to **Joan Stark** and expanded marine biodiversity by **Claudio Matsuoka**. Their shared work gave this ocean its foundation and much of its character.
+
+**[OpenGhost](https://github.com/xanderchinxyz/OpenGhost)** by **xanderchinxyz and its contributors** inspired the early exploration of a small physical display. Thank you to both projects and the people who made them possible. Read the [full credits and project origins](CREDITS.md).
+
+We call ASCII Genesis an **ocean**: its creatures travel through a scrolling world of changing terrain and habitats.
+
+**v0.1.4** brings consistent ocean wording to the device and guides, and prominent thanks to the projects that inspired it. Wi-Fi updates are available from Settings. The display, touch controls, and home Wi-Fi connection were checked on the owner's board. See [validation](VALIDATION.md) for checks performed.
 
 ![ASCII Genesis Mid browser preview](docs/preview.png)
 
@@ -36,7 +44,7 @@ node preview/serve.mjs
 
 Open **http://127.0.0.1:4175**. The preview is a design simulation; it does not connect to a board or collect Wi-Fi passwords.
 
-The aquarium draws a 320 × 320 square scene and enlarges it evenly to the physical 480 × 480 screen. Creature shapes keep their proportions. The square edition adds water depth instead of stretching the Mini's wide scene.
+The ocean draws a 320 × 320 square scene and enlarges it evenly to the physical 480 × 480 screen. Creature shapes keep their proportions. The square edition adds water depth instead of stretching the Mini's wide scene.
 
 ## Project status
 

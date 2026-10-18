@@ -1,5 +1,11 @@
 # Changes
 
+## 0.1.4
+
+- Makes Asciiquarium and its creators, along with OpenGhost's display inspiration, prominent near the top of the GitHub README.
+- Uses ocean consistently in the project description, guides, device status messages, and phone Wi-Fi setup. Original project names and historical credits are preserved.
+- Keeps the display layout, creatures, ordered parade, touch controls, and Wi-Fi update behavior unchanged.
+
 ## 0.1.3
 
 - Adds Check for Updates and Install in Settings, using a separate Mid wireless update channel.
@@ -25,4 +31,4 @@
 
 ## 0.1.0
 
-- Initial GUITION ESP32-4848S040 port. User confirmed the aquarium display appeared. Touch did not respond; fixed in 0.1.1.
+- Initial GUITION ESP32-4848S040 port. User confirmed the ocean display appeared. Touch did not respond; fixed in 0.1.1.
