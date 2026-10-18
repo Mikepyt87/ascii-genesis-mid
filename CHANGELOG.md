@@ -1,5 +1,13 @@
 # Changes
 
+## 0.1.2
+
+- Corrected WPA3 SAE login configuration to support both derivation methods. The owner's saved home network now connects and receives an IP address.
+- Updates setup status after success or disconnection instead of leaving "Connecting to home Wi-Fi..." on screen.
+- Shows specific login, network, security, and timeout messages. A connection has a 20-second deadline, with later retries at 45-second intervals.
+- Removed the duplicate immediate connection attempt at startup and after provisioning.
+- Keeps the working touch controls, named ordered parades, and randomized ocean starts.
+
 ## 0.1.1
 
 - Fixed GT911 register address byte order so touches can be read and acknowledged correctly. Added controller identification and touch-press logs.

@@ -26,15 +26,33 @@ static httpd_handle_t portal;
 static char ssid[33], password[65], pending_ssid[33], pending_password[65], token[17];
 static bool credentials_pending;
 static int64_t portal_until;
+static int64_t connect_until,next_connect;
+
+// Called with the status lock held; keep the label and actual link in agreement.
+static void set_link(wifi_link_state_t link) {
+    status.link=link;status.online=link==LINK_CONNECTED;
+    if(!status.busy&&!status.setup)strlcpy(status.message,wifi_link_message(link),sizeof(status.message));
+}
 
 static void message(const char *s) {xSemaphoreTake(lock,portMAX_DELAY);strlcpy(status.message,s,sizeof(status.message));xSemaphoreGive(lock);}
 void network_status(net_status_t *out) {xSemaphoreTake(lock,portMAX_DELAY);*out=status;xSemaphoreGive(lock);}
 void network_command(net_command_t cmd) {xQueueSend(commands,&cmd,0);}
 static void wifi_event(void *arg,esp_event_base_t base,int32_t id,void *data) {
-    (void)arg;(void)data;
+    (void)arg;
     xSemaphoreTake(lock,portMAX_DELAY);
-    if(base==IP_EVENT && id==IP_EVENT_STA_GOT_IP)status.online=true;
-    if(base==WIFI_EVENT && id==WIFI_EVENT_STA_DISCONNECTED)status.online=false;
+    if(base==IP_EVENT && id==IP_EVENT_STA_GOT_IP){set_link(LINK_CONNECTED);ESP_LOGI("connection","Home Wi-Fi connected; IP address received");}
+    if(base==WIFI_EVENT && id==WIFI_EVENT_STA_DISCONNECTED){
+        const wifi_event_sta_disconnected_t *event=data;int reason=event?event->reason:0;
+        // Our own disconnect starts a new attempt or ends a timed-out attempt.
+        if(reason!=WIFI_REASON_ASSOC_LEAVE||status.link==LINK_CONNECTED){
+            wifi_link_state_t link=LINK_FAILED;
+            if(reason==WIFI_REASON_AUTH_FAIL||reason==WIFI_REASON_4WAY_HANDSHAKE_TIMEOUT||reason==WIFI_REASON_HANDSHAKE_TIMEOUT)link=LINK_AUTH_FAILED;
+            else if(reason==WIFI_REASON_AUTH_EXPIRE)link=LINK_AUTH_TIMEOUT;
+            else if(reason==WIFI_REASON_NO_AP_FOUND)link=LINK_NOT_FOUND;
+            else if(reason==WIFI_REASON_NO_AP_FOUND_W_COMPATIBLE_SECURITY||reason==WIFI_REASON_NO_AP_FOUND_IN_AUTHMODE_THRESHOLD)link=LINK_SECURITY_FAILED;
+            set_link(link);ESP_LOGW("connection","Home Wi-Fi disconnected; reason=%d",reason);
+        }
+    }
     xSemaphoreGive(lock);
 }
 static void connect_saved(void) {
@@ -43,8 +61,12 @@ static void connect_saved(void) {
     strlcpy((char*)cfg.sta.ssid,ssid,sizeof(cfg.sta.ssid));
     strlcpy((char*)cfg.sta.password,password,sizeof(cfg.sta.password));
     cfg.sta.pmf_cfg.capable=true;
+    cfg.sta.sae_pwe_h2e=WPA3_SAE_PWE_BOTH;
+    int64_t now=esp_timer_get_time();connect_until=now+20000000LL;next_connect=now+45000000LL;
+    xSemaphoreTake(lock,portMAX_DELAY);set_link(LINK_CONNECTING);xSemaphoreGive(lock);
     esp_wifi_disconnect();
-    if(esp_wifi_set_config(WIFI_IF_STA,&cfg)==ESP_OK)esp_wifi_connect();
+    esp_err_t err=esp_wifi_set_config(WIFI_IF_STA,&cfg);if(err==ESP_OK)err=esp_wifi_connect();
+    if(err!=ESP_OK){xSemaphoreTake(lock,portMAX_DELAY);set_link(LINK_FAILED);xSemaphoreGive(lock);ESP_LOGW("connection","Could not start Wi-Fi: %s",esp_err_to_name(err));}
 }
 // Decodes a form field without accepting truncation or embedded NUL bytes.
 static bool decode(const char *src,char *dst,size_t cap) {
@@ -135,7 +157,7 @@ static void open_portal(void) {
 static void check_update(void) {message("USB updates only - no published channel yet");}
 static void install_update(void) {check_update();}
 static void network_task(void *arg) {
-    (void)arg;connect_saved();int64_t next_connect=0;
+    (void)arg;connect_saved();
     while(true) {
         net_command_t cmd;
         if(xQueueReceive(commands,&cmd,pdMS_TO_TICKS(250))) {
@@ -148,12 +170,17 @@ static void network_task(void *arg) {
         if(pending) {
             nvs_handle_t nvs;esp_err_t err=nvs_open("wifi4848",NVS_READWRITE,&nvs);
             if(err==ESP_OK){err=nvs_set_str(nvs,"ssid",ssid);if(err==ESP_OK)err=nvs_set_str(nvs,"password",password);if(err==ESP_OK)err=nvs_commit(nvs);nvs_close(nvs);}
-            if(err==ESP_OK){vTaskDelay(pdMS_TO_TICKS(1500));close_portal();message("Connecting to home Wi-Fi...");connect_saved();}
+            if(err==ESP_OK){vTaskDelay(pdMS_TO_TICKS(1500));close_portal();connect_saved();}
             else message("Could not save Wi-Fi - try setup again");
         }
         int64_t now=esp_timer_get_time();net_status_t s;network_status(&s);
         if(s.setup&&now>portal_until){close_portal();message("Setup timed out - aquarium stays offline-ready");}
-        if(!s.online&&ssid[0]&&now>next_connect){esp_wifi_connect();next_connect=now+15000000LL;}
+        if(wifi_link_timed_out(s.link,now,connect_until)){
+            xSemaphoreTake(lock,portMAX_DELAY);
+            if(wifi_link_timed_out(status.link,now,connect_until)){set_link(LINK_TIMEOUT);esp_wifi_disconnect();}
+            xSemaphoreGive(lock);
+        }
+        if(!s.setup&&ssid[0]&&wifi_link_retry_due(s.link,now,next_connect))connect_saved();
     }
 }
 void network_start(void) {

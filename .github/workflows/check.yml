@@ -12,6 +12,7 @@ jobs:
           node-version: '22'
       - run: node preview/check.mjs
       - run: node tools/generate-assets.mjs --check
+      - run: gcc -std=c11 -Wall -Wextra -Werror tools/wifi-check.c -o /tmp/mid-wifi-check && /tmp/mid-wifi-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/touch-check.c -o /tmp/mid-touch-check && /tmp/mid-touch-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/parade-check.c -lm -o /tmp/mid-parade-check && /tmp/mid-parade-check
       - uses: espressif/esp-idf-ci-action@v1

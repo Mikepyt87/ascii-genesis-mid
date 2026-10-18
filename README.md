@@ -2,7 +2,7 @@
 
 A touch-controlled ASCII aquarium for the **GUITION ESP32-4848S040**, with a **4-inch, 480 × 480 square screen**. This is the middle-size edition of ASCII Genesis, between the Mini and Raspberry Pi versions.
 
-**v0.1.1** adds faster named parades, randomized ocean starts, and a GT911 touch-address fix. The display and touch controls were confirmed working on the owner's board. See [validation](VALIDATION.md) for remaining checks.
+**v0.1.2** fixes home Wi-Fi login compatibility and setup status messages. The display, touch controls, and home Wi-Fi connection were checked on the owner's board. See [validation](VALIDATION.md) for remaining checks.
 
 ![ASCII Genesis Mid browser preview](docs/preview.png)
 

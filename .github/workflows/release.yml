@@ -30,6 +30,7 @@ jobs:
           node -e 'if(!/^\d{1,5}\.\d{1,5}\.\d{1,5}$/.test(process.env.VERSION))process.exit(1)'
           printf '%s' "$VERSION" > firmware/release-version.txt
       - run: node preview/check.mjs && node tools/generate-assets.mjs --check
+      - run: gcc -std=c11 -Wall -Wextra -Werror tools/wifi-check.c -o /tmp/wifi-check && /tmp/wifi-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/touch-check.c -o /tmp/touch-check && /tmp/touch-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/parade-check.c -lm -o /tmp/parade-check && /tmp/parade-check
       - uses: espressif/esp-idf-ci-action@v1

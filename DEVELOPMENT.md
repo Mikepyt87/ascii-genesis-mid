@@ -46,3 +46,5 @@ gcc -std=c11 -Wall -Wextra -Werror tools/touch-check.c -o touch-check
 ```
 
 This tests report status, release, report length, invalid coordinates, and all 230,400 physical touch positions. Compilation alone cannot verify I2C or physical alignment. See VALIDATION.md for checks actually run.
+
+`tools/wifi-check.c` checks connection messages and retry/timeout policy. Compile it with the same native compiler flags. A connection attempt has a 20-second deadline and a 45-second retry interval; an in-progress attempt is never immediately restarted. WPA3 SAE explicitly supports both password-element derivation methods. Connection event logs include reason codes without passwords or network names.

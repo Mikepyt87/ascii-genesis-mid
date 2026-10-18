@@ -1,6 +1,6 @@
 # Install ASCII Genesis Mid
 
-This guide is for the **GUITION ESP32-4848S040, ESP32-S3 N16R8**. v0.1.1 was installed on the owner's board, with its display and touch controls confirmed working. See VALIDATION.md for the checks performed.
+This guide is for the **GUITION ESP32-4848S040, ESP32-S3 N16R8**. v0.1.2 was installed on the owner's board; display, touch, and home Wi-Fi connection were checked. See VALIDATION.md for the checks performed.
 
 ## What you need
 
@@ -47,9 +47,9 @@ Record any screen shift, flicker, mirrored picture, wrong touch position, or res
 
 ## Wi-Fi setup
 
-In **Settings → Set up Wi-Fi with phone**, join **ASCII-Genesis-Mid-XXXX** with the password shown on screen. Open **http://192.168.4.1**, enter your 2.4 GHz network name and password, and save. Rejoin your regular network and check the display's connection status. Setup closes after ten minutes or when you return to the ocean.
+In **Settings → Set up Wi-Fi with phone**, join **ASCII-Genesis-Mid-XXXX** with the password shown on screen. Open **http://192.168.4.1**, enter your 2.4 GHz network name and password, and save. Rejoin your regular network. The aquarium shows **Wi-Fi Connected** when it receives a network address. If connection fails, the screen gives a reason and you can reopen setup to try again. Setup closes after ten minutes or when you return to the ocean.
 
-Wi-Fi is optional. v0.1.1 has no online features beyond joining your network and the temporary local setup page. **USB Updates Only** is a status button; it cannot install another board's firmware.
+Wi-Fi is optional. v0.1.2 has no online features beyond joining your network and the temporary local setup page. **USB Updates Only** is a status button; it cannot install another board's firmware.
 
 ## Recover or restore
 

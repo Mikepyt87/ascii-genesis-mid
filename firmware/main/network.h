@@ -2,9 +2,11 @@
 #pragma once
 #include <stdbool.h>
 #include <stdint.h>
+#include "wifi_status.h"
 typedef enum { NET_SETUP, NET_CHECK, NET_INSTALL, NET_CLOSE_SETUP } net_command_t;
 typedef struct {
     bool online, setup, busy, available;
+    wifi_link_state_t link;
     int progress;
     char message[54], version[24], ssid[33], ap_name[33], ap_password[17];
 } net_status_t;

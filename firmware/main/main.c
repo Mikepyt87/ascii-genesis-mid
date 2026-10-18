@@ -112,7 +112,11 @@ static void draw_ocean(bool controls){
 static void draw_settings(net_status_t *n){
     const uint16_t c=rgb(0xbde9e6),m=rgb(0x73c9ff);char line[54];
     for(int i=0;i<320*320;i++)fb[i]=rgb(0x020c14);
-    if(screen==2){text("CONNECT WITH YOUR PHONE",20,8,c);if(n->setup){text("Join this Wi-Fi network:",20,24,c);text_large(n->ap_name,20,40,m);text("Password:",20,64,c);text_large(n->ap_password,20,78,m);text("Open http://192.168.4.1",20,108,c);text("Setup closes after 10 minutes",20,124,c);}else text(n->message,20,44,c);}
+    if(screen==2){
+      if(n->setup){text("CONNECT WITH YOUR PHONE",20,8,c);text("Join this Wi-Fi network:",20,24,c);text_large(n->ap_name,20,40,m);text("Password:",20,64,c);text_large(n->ap_password,20,78,m);text("Open http://192.168.4.1",20,108,c);text("Setup closes after 10 minutes",20,124,c);}
+      else{text(n->online?"WI-FI CONNECTED":n->link==LINK_CONNECTING?"CONNECTING TO HOME WI-FI":"WI-FI SETUP STATUS",20,8,c);text(n->message,20,44,c);
+        text(n->online?"Tap Back to Ocean to finish":n->link==LINK_CONNECTING?"Waiting up to 20 seconds...":"Reopen Settings to try Wi-Fi setup",20,70,m);}
+    }
     else {text("SETTINGS",20,8,c);snprintf(line,sizeof(line),"v%s  %s",esp_app_get_description()->version,n->online?"Wi-Fi online":"Offline");text(line,20,22,m);text(n->message,20,38,c);
       rect(0,58,320,32,rgb(0x102631));text("SET UP WI-FI WITH PHONE",20,70,c);
       rect(0,98,320,32,rgb(0x102631));
