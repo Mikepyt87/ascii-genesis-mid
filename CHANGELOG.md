@@ -1,5 +1,12 @@
 # Changes
 
+## 0.1.9
+
+- Keeps the shore crab, reef lobster, peacock mantis shrimp, and violet octopus on the scrolling seabed in the normal ocean and parade.
+- Anchors visible feet to the terrain and removes their swimming bob. Bottom arrivals wait for a clear bottom band.
+- Keeps the original parade order and six-second crossings. Neighbors take turns when the bottom lane needs room; the full parade now takes 99 seconds.
+- Adds browser and native checks for both directions, terrain contact, spacing, complete crossings, and grounded parade placement.
+
 ## 0.1.8
 
 - Fixes creatures disappearing when the waterline drops: the line now waits above existing swimmers instead of clearing their slots or moving their lanes.

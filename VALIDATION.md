@@ -1,6 +1,10 @@
 # Validation record
 
-## Current release: v0.1.8 — October 18, 2026
+## Current release: v0.1.9 — October 18, 2026
+
+Local checks cover all four bottom dwellers in both directions, visible foot contact, scrolling terrain, no swimming bob, reserved bands, and grounded parade placement. Physical-board confirmation of this version is pending. Published build and download verification will be recorded after release.
+
+## Previous release: v0.1.8 — October 18, 2026
 
 Local simulation and renderer checks passed, including creature identity and unchanged swimming lanes throughout waterline transitions. Native waterline clearance is checked alongside the parade geometry. This version has not been confirmed on the physical board. The [automated checks](https://github.com/Mikepyt87/ascii-genesis-mid/actions/runs/39132054114) and [release build](https://github.com/Mikepyt87/ascii-genesis-mid/actions/runs/39132090599) passed for source commit `3b63aa8a49f9acb7ae39d71a879ebebb96cbb87f`. The public stable manifest, application, and complete USB image were downloaded and verified: correct board, exact versioned URL, embedded project/version, **1,115,648 application bytes**, SHA-256, and matching application bytes in the USB image at 0x20000.
 

@@ -13,7 +13,7 @@ const ctx={fillRect(){rendered++;},save(){},restore(){},beginPath(){},rect(){},c
 for(let frame=0;frame<36000;frame++){
  ocean.step(.1);visited.add(ocean.habitat);
  assert.ok(ocean.fish.length<=3);
- for(const f of ocean.fish){assert.ok(f.y>=23&&f.y+f.height+2<=SWIM_BOTTOM);assert.ok(f.speed>=9&&f.speed<18);}
+ for(const f of ocean.fish){assert.ok(f.y>=23&&(ocean.isBottom(f.index)||f.y+f.height+2<=SWIM_BOTTOM));assert.ok(f.speed>=9&&f.speed<18);}
  for(let i=0;i<ocean.fish.length;i++)for(let j=i+1;j<ocean.fish.length;j++)assert.ok(bandsClear(ocean.fish[i].y,ocean.fish[i].height,ocean.fish[j].y,ocean.fish[j].height));
  if(frame%1000===0)render(ctx,ocean,MiniFont);
 }
@@ -32,3 +32,5 @@ assert.ok(network.includes('ASCII-Genesis-Mid'));
 console.log('PASS: one simulated hour, square layout, all habitats, creature clearance, pause, controls, 28-creature parade, and board-specific wireless update policy.');
 
 const {checkScenes}=await import('./scenes-check.mjs');checkScenes(globalThis.MiniAquarium,sprites);
+
+const {checkBottom}=await import('./bottom-check.mjs');checkBottom(globalThis.MiniAquarium,sprites);
