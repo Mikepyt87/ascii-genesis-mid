@@ -6,10 +6,14 @@ Use Node.js 20 or newer. No npm dependencies are required.
 node preview/serve.mjs
 node preview/check.mjs
 node tools/generate-scenes.mjs --check
+node tools/build-scenes-tour.mjs --check
+node tools/check-docs.mjs
 node tools/generate-assets.mjs --check
 ```
 
 Open **http://127.0.0.1:4175**. The server binds only to loopback. Stop it with Ctrl+C.
+
+Surface artwork is in `preview/ocean-scenes.js`. After editing it, run `node tools/generate-scenes.mjs` and `node tools/build-scenes-tour.mjs`; commit the generated header and illustrations together. The catalog’s 28 regular drawings remain separate from the surface visitors.
 
 Edit drawings in `art/original-fish.mjs`, then run `node art/restore-sprites.mjs` and `node tools/generate-assets.mjs`. Commit artwork and generated `firmware/main/assets.h` together, with their notices.
 

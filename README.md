@@ -50,17 +50,17 @@ There are **28 colored creature and vehicle designs**, including the peacock man
 
 Tap the water for **Pause · New World · Parade · Settings**. The parade keeps all 28 designs in their original order, with six-second crossings and up to two creatures at a time. A full Mid parade takes **87 seconds (1 minute 27 seconds)**, then returns to the preserved ocean. The full names appear at the top right, with larger, brighter text from v0.1.5. Regular swimmers move at **9–18 logical pixels per second**, while the seabed scrolls at **3.6 logical pixels per second**. Mid draws a 320 × 320 scene and enlarges it evenly to the 480 × 480 screen, preserving the creatures' proportions.
 
-Surface stretches bring sailing boats, whales that surface and spout, and an occasional Nessie-like sea monster. Castles and ruins pass along the seabed. Bubbles rise from creatures or the seabed, with no more than two on screen at once. Surface visitors take turns, and the creature parade keeps its own clear view.
+Surface stretches bring sailing boats, whales that surface and spout, and an occasional Nessie-like sea monster. Castles and ruins pass along the seabed within the bottom third of the screen. Bubbles rise from creatures or the seabed, with no more than two on screen at once. Surface visitors take turns, and the creature parade keeps its own clear view. See the [surface scenes and landmarks guide](docs/SURFACE-SCENES.md) for the new artwork, timing, and bubble limits.
 
-![ASCII Genesis Mid ocean](docs/preview.png)
+![ASCII Genesis Mid with a spouting whale and seabed castle](docs/images/surface-whale.svg)
 
-The image is a browser preview, not a photograph of the board.
+The image is a generated preview from the current renderer, not a photograph of the board.
 
 ## Updates and source
 
 The Mid updater follows this repository's wireless update channel. Connect home Wi-Fi or a 2.4 GHz hotspot, then use **Settings → Check for Updates → Install**. Keep power connected through the restart and for at least 30 seconds afterward. It checks for releases automatically but waits for you to choose Install. [The installation and update guide](INSTALL.md) covers Wi-Fi setup and recovery.
 
-Current firmware: **v0.1.5**. Use a numbered [release](https://github.com/Mikepyt87/ascii-genesis-mid/releases) for installable firmware; [CHANGELOG.md](CHANGELOG.md) records the changes. Boards on v0.1.2 or earlier need one USB installation of v0.1.3 or newer before wireless updates are available. Mid accepts its own firmware and uses a separate channel from Mini.
+Current firmware: **v0.1.6**. Use a numbered [release](https://github.com/Mikepyt87/ascii-genesis-mid/releases) for installable firmware; [CHANGELOG.md](CHANGELOG.md) records the changes. The [validation record](VALIDATION.md) separates software checks from physical-board confirmation. Boards on v0.1.2 or earlier need one USB installation of v0.1.3 or newer before wireless updates are available. Mid accepts its own firmware and uses a separate channel from Mini.
 
 The firmware and board drivers are in `firmware/`; the browser preview is in `preview/`; artwork is in `art/`; generators and checks are in `tools/`. Tests run in GitHub Actions. Use [Development](DEVELOPMENT.md) for the preview and ESP-IDF 6.1 build, [Hardware](HARDWARE.md) for the board references, and [Validation](VALIDATION.md) for completed checks and remaining hardware tests.
 

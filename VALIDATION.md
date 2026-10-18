@@ -1,5 +1,18 @@
 # Validation record
 
+## Current release: v0.1.6 — October 18, 2026
+
+The release was built from commit `c50da06d92452afcb5d5ebd63ef1823e0550002d`. [Check Mid](https://github.com/Mikepyt87/ascii-genesis-mid/actions/runs/39127569705) and the [release build](https://github.com/Mikepyt87/ascii-genesis-mid/actions/runs/39127630424) both passed.
+
+- ESP-IDF 6.1 compiled and linked the board-specific firmware; the application fits its OTA slot.
+- Existing preview checks passed, including one simulated hour, 40 randomized openings, ordered parades, spacing, and controls.
+- Six additional ten-minute runs checked every surface visitor, deep/shallow transitions, bottom-third landmarks, the shared two-bubble limit, waterline disappearance, pause, and parade isolation.
+- The preview artwork was visually inspected after correcting the monster and Mini proportions. The generated scene header matches the source artwork.
+- Downloaded the public stable manifest, application, complete USB image, and matching source ZIP. Verified board, exact versioned URL, embedded project/version, byte count **1,116,416**, SHA-256, and identical application bytes in the USB image at 0x20000.
+- The new v0.1.6 scenes and installation have **not yet been confirmed on the physical board**. Earlier hardware results below remain historical evidence, not v0.1.6 hardware tests.
+
+## Earlier hardware validation: v0.1.3
+
 **ASCII Genesis Mid 0.1.3**, prepared October 17, 2026.
 
 | Check | Result |
