@@ -1,5 +1,11 @@
 # Changes
 
+## 0.1.8
+
+- Fixes creatures disappearing when the waterline drops: the line now waits above existing swimmers instead of clearing their slots or moving their lanes.
+- Reserves clear bands below the intended surface depth for new arrivals, with full upward-bob clearance for existing swimmers.
+- Adds regression checks that track each creature through surface transitions until its full drawing leaves the screen.
+
 ## 0.1.7
 
 - Reviews all 28 regular designs for a consistent size relationship, shared across Pi, Mini, and Mid.

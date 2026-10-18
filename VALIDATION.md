@@ -1,6 +1,10 @@
 # Validation record
 
-## Current release: v0.1.7 — October 18, 2026
+## Current release: v0.1.8 — October 18, 2026
+
+Local simulation and renderer checks passed, including creature identity and unchanged swimming lanes throughout waterline transitions. Native waterline clearance is checked alongside the parade geometry. This version has not been confirmed on the physical board. The published build and public download verification are recorded after release.
+
+## Previous release: v0.1.7 — October 18, 2026
 
 The shared artwork now uses balanced creature proportions; see [drawing sizes](docs/CREATURE-SIZES.md). Local simulation and renderer checks passed for the new artwork, including full parade entry/exit, non-overlapping bands, bottom-creature contact, and existing surface/bubble limits. This release has not been confirmed on the physical board. The [automated checks](https://github.com/Mikepyt87/ascii-genesis-mid/actions/runs/39129955723) and [release build](https://github.com/Mikepyt87/ascii-genesis-mid/actions/runs/39130027034) passed for source commit `11fde0a79043f6ed83f24391daec330c14456a36`. Downloaded and verified the public stable manifest, application, and complete USB image: correct board, embedded project/version, exact asset URL, **1,115,616 application bytes**, SHA-256, and matching application bytes in the USB image at 0x20000.
 

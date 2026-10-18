@@ -1,6 +1,6 @@
 # Install ASCII Genesis Mid
 
-This guide is for the **GUITION ESP32-4848S040, ESP32-S3 N16R8**. The current release is **v0.1.7**; see the [new scenes guide](docs/SURFACE-SCENES.md) and [release history](CHANGELOG.md). v0.1.3 was installed over Wi-Fi on the owner's board; the owner confirmed the ocean returned, and its log confirmed the new version and home Wi-Fi reconnect. See VALIDATION.md for the checks performed.
+This guide is for the **GUITION ESP32-4848S040, ESP32-S3 N16R8**. The current release is **v0.1.8**; see the [new scenes guide](docs/SURFACE-SCENES.md) and [release history](CHANGELOG.md). v0.1.3 was installed over Wi-Fi on the owner's board; the owner confirmed the ocean returned, and its log confirmed the new version and home Wi-Fi reconnect. See VALIDATION.md for the checks performed.
 
 ## What you need
 
