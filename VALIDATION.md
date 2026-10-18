@@ -2,7 +2,7 @@
 
 ## Current release: v0.1.9 — October 18, 2026
 
-Local checks cover all four bottom dwellers in both directions, visible foot contact, scrolling terrain, no swimming bob, reserved bands, and grounded parade placement. Physical-board confirmation of this version is pending. Published build and download verification will be recorded after release.
+Local checks cover all four bottom dwellers in both directions, visible foot contact, scrolling terrain, no swimming bob, reserved bands, and grounded parade placement. Physical-board confirmation of this version is pending. The [automated checks](https://github.com/Mikepyt87/ascii-genesis-mid/actions/runs/39133542315) and [release build](https://github.com/Mikepyt87/ascii-genesis-mid/actions/runs/39133586263) passed for source commit `80cbf5fdce10c4aea53f5354b8c514783e4ee669`, including the native C terrain-contact tests. The public stable manifest, application, and complete USB image were downloaded and verified: correct board, exact versioned URL, embedded project/version, **1,120,192 application bytes**, SHA-256, and matching application bytes in the USB image at 0x20000. The four grounded designs were visually checked in the browser preview.
 
 ## Previous release: v0.1.8 — October 18, 2026
 
