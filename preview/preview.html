@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASCII Genesis Mid</title>
+<style>
+body{margin:30px auto;padding:0 20px;max-width:680px;background:#10191f;color:#c4e6e5;font:16px system-ui;line-height:1.5}
+h1{font-size:26px;margin-bottom:5px}p{color:#9fb9be}canvas{display:block;width:min(100%,480px);height:auto;margin:24px auto;background:#020c14;image-rendering:pixelated;border:10px solid #25343e;border-radius:10px;box-sizing:border-box;touch-action:none}
+.buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}button{font:inherit;color:#c4e6e5;background:#243944;border:1px solid #416170;padding:10px 15px;border-radius:6px;cursor:pointer}button:focus-visible{outline:2px solid #73c9ff}.note{font-size:14px}
+</style>
+<h1>ASCII Genesis Mid</h1><p>GUITION ESP32-4848S040 · 4-inch square display · 480 × 480</p>
+<canvas width="320" height="320" aria-label="Animated square ASCII aquarium. Tap to reveal touch controls."></canvas>
+<div class="buttons"><button id="pause">Pause</button><button id="reset">New world</button><button id="parade">Parade</button><button id="settings">Settings</button></div>
+<p id="status" aria-live="polite">Browser preview · no board connection</p>
+<p class="note">The real board runs on USB power without a computer or internet. Wi-Fi setup is available on the board; this preview does not collect passwords. Mid v0.1.1 uses USB installation and updates.</p>
+<script src="fish-art.js"></script><script src="font.js"></script><script src="ocean.js"></script>
+<script>
+const api=globalThis.MiniAquarium,canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');
+let seed=crypto.getRandomValues(new Uint32Array(1))[0],ocean=new api.MiniOcean(AsciiquariumSprites,seed),screen=false,elapsed=0,until=8,last=0;
+const pause=document.querySelector('#pause'),status=document.querySelector('#status');
+function reset(){ocean=new api.MiniOcean(AsciiquariumSprites,++seed);screen=false;until=elapsed+8;}
+function toggle(){ocean.paused=!ocean.paused;until=elapsed+8;}
+pause.onclick=toggle;document.querySelector('#reset').onclick=reset;
+document.querySelector('#parade').onclick=()=>{screen=false;ocean.toggleParade();until=elapsed+8;};
+document.querySelector('#settings').onclick=()=>{screen=!screen;};
+canvas.onpointerdown=e=>{const r=canvas.getBoundingClientRect();const x=(e.clientX-r.left)*320/r.width,y=(e.clientY-r.top)*320/r.height;
+ if(screen){if(y>=288)screen=false;return;}
+ if(ocean.controls&&y>=288){if(x<86)toggle();else if(x<160)reset();else if(x<234)ocean.toggleParade();else screen=true;}
+ until=elapsed+8;
+};
+function settings(){ctx.fillStyle='#020c14';ctx.fillRect(0,0,320,320);ctx.fillStyle='#bde9e6';ctx.font='12px monospace';
+ for(const [text,y] of [['ASCII GENESIS MID',26],['GUITION ESP32-4848S040',55],['480 x 480 / ST7701 + GT911',79],['Browser preview',115],['Wi-Fi setup runs on the board.',148],['USB updates only in v0.1.1.',174],['Tap below to return.',210]])ctx.fillText(text,20,y);
+ ctx.fillStyle='#102631';ctx.fillRect(12,288,296,24);ctx.fillStyle='#bde9e6';ctx.fillText('BACK TO OCEAN',110,305);
+}
+if(matchMedia('(prefers-reduced-motion: reduce)').matches)ocean.paused=true;
+function frame(now){const dt=last?Math.min((now-last)/1000,.1):0;last=now;if(!document.hidden){elapsed+=dt;ocean.step(dt);ocean.controls=ocean.paused||elapsed<until;screen?settings():api.render(ctx,ocean,MiniFont);pause.textContent=ocean.paused?'Resume':'Pause';pause.setAttribute('aria-pressed',ocean.paused);document.querySelector('#parade').textContent=ocean.parade?'Return to ocean':'Parade';status.textContent=screen?'Settings preview · Wi-Fi setup is on the physical board':ocean.paused?'Paused · browser preview':'Browser preview · no board connection';}requestAnimationFrame(frame);}
+globalThis.midPreview={snapshot:()=>({time:ocean.time,paused:ocean.paused,screen,controls:ocean.controls,parade:!!ocean.parade,fish:ocean.fish.length})};
+requestAnimationFrame(frame);
+</script></html>

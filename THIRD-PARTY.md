@@ -1,0 +1,10 @@
+# Third-party source and licenses
+
+| Material | Location | License / notice |
+| --- | --- | --- |
+| Firmware and project additions | firmware/, tools/ | [GPL-3.0-or-later](LICENSE) |
+| Asciiquarium source and adapted artwork | art/ | [GPL-2.0-or-later](art/LICENSE.txt), original notices retained |
+| Browser ocean renderer inherited from Mini | preview/ocean.js | GPL-2.0-or-later, retained source notice |
+| Adafruit GFX bitmap font | preview/font.js, generated assets | [BSD notice](preview/FONT-LICENSE.txt) |
+
+Generated firmware assets include the artwork and font notices. Source copies are included. ESP-IDF and esptool are obtained separately and retain their own licenses. The GUITION board layer uses documented pin assignments and panel register values; it does not bundle a third-party display driver. See [CREDITS.md](CREDITS.md).

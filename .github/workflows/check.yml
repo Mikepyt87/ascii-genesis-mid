@@ -1,0 +1,31 @@
+name: Check Mid
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node preview/check.mjs
+      - run: node tools/generate-assets.mjs --check
+      - run: gcc -std=c11 -Wall -Wextra -Werror tools/touch-check.c -o /tmp/mid-touch-check && /tmp/mid-touch-check
+      - run: gcc -std=c11 -Wall -Wextra -Werror tools/parade-check.c -lm -o /tmp/mid-parade-check && /tmp/mid-parade-check
+      - uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v6.1
+          target: esp32s3
+          path: firmware
+          command: idf.py build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mid-hardware-test-build
+          path: |
+            firmware/build/ascii_genesis_mid.bin
+            firmware/build/bootloader/bootloader.bin
+            firmware/build/partition_table/partition-table.bin
+            firmware/build/ota_data_initial.bin
+            firmware/build/flasher_args.json
