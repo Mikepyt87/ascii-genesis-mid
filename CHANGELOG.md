@@ -1,5 +1,12 @@
 # Changes
 
+## 0.1.3
+
+- Adds Check for Updates and Install in Settings, using a separate Mid wireless update channel.
+- Checks for new versions after startup and daily. Installation always requires a tap.
+- Verifies HTTPS, board identity, version, file size, SHA-256, and the app's embedded identity before changing boot slots. Keeps the previous app for rollback.
+- Boards running v0.1.2 or earlier need one USB installation to enable wireless updates. Saved Wi-Fi settings are retained.
+
 ## 0.1.2
 
 - Corrected WPA3 SAE login configuration to support both derivation methods. The owner's saved home network now connects and receives an IP address.

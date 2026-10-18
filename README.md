@@ -2,7 +2,7 @@
 
 A touch-controlled ASCII aquarium for the **GUITION ESP32-4848S040**, with a **4-inch, 480 × 480 square screen**. This is the middle-size edition of ASCII Genesis, between the Mini and Raspberry Pi versions.
 
-**v0.1.2** fixes home Wi-Fi login compatibility and setup status messages. The display, touch controls, and home Wi-Fi connection were checked on the owner's board. See [validation](VALIDATION.md) for remaining checks.
+**v0.1.3** adds Wi-Fi updates from Settings. The display, touch controls, and home Wi-Fi connection were checked on the owner's board. See [validation](VALIDATION.md) for checks performed.
 
 ![ASCII Genesis Mid browser preview](docs/preview.png)
 
@@ -10,7 +10,7 @@ The image above is the browser preview, not a photograph of the board.
 
 The ocean has 28 colored creature and vehicle designs, six changing habitats, rising bubbles, swaying plants, and a scrolling seabed. Three creatures swim at a time. Tap the water to reveal **Pause · New World · Parade · Settings**. The parade keeps all 28 designs in their original order. Each crosses in six seconds, with up to two in separate bands and their names at the top right. A full Mid parade takes **87 seconds (1 minute 27 seconds)**, then returns to the preserved ocean. Startup and New World randomize the regular ocean’s opening creatures, directions, positions, and habitat.
 
-The board starts on USB power and works offline. It does not need a Raspberry Pi, SD card, API key, or internet connection. Wi-Fi setup is included, but **this first version installs and updates by USB**. There is no Mid wireless update service yet.
+The board starts on USB power and works offline. It does not need a Raspberry Pi, SD card, or API key. Connect Wi-Fi to check for new versions in **Settings → Check for Updates**. Installation starts only when you tap **Install**. Boards running v0.1.2 or earlier need one USB installation to add this feature.
 
 ## Start here
 

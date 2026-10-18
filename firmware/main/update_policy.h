@@ -1,5 +1,36 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 #define BOARD_ID "guition-esp32-4848s040"
-#define UPDATES_ENABLED 0
-// Mid v0.1.0 installs by USB. No Mini update URLs are used.
+#define RELEASE_PREFIX "https://github.com/Mikepyt87/ascii-genesis-mid/releases/download/mid-v"
+#define CHANNEL_URL "https://github.com/Mikepyt87/ascii-genesis-mid/releases/download/mid-stable/manifest.json"
+#define MAX_FIRMWARE_SIZE 0x600000u
+
+static inline bool version_parts(const char *s, unsigned v[3]) {
+    char tail;
+    if (!s || strlen(s) > 23 || sscanf(s, "%u.%u.%u%c", &v[0], &v[1], &v[2], &tail) != 3) return false;
+    for (const char *p=s; *p; ++p) if ((*p<'0'||*p>'9') && *p!='.') return false;
+    return v[0] <= 65535 && v[1] <= 65535 && v[2] <= 65535;
+}
+static inline bool newer_version(const char *candidate, const char *current) {
+    unsigned a[3], b[3]; if (!version_parts(candidate,a) || !version_parts(current,b)) return false;
+    for (int i=0;i<3;++i) if(a[i]!=b[i]) return a[i]>b[i];
+    return false;
+}
+static inline bool valid_manifest_identity(const char *board, const char *version, const char *url,
+                                          const char *sha, uint32_t size) {
+    unsigned parts[3];
+    if (!board||!url||!sha || strcmp(board,BOARD_ID) || !version_parts(version,parts)
+        || size < 256 || size > MAX_FIRMWARE_SIZE || strlen(sha)!=64) return false;
+    for(int i=0;i<64;++i) if(!((sha[i]>='0'&&sha[i]<='9')||(sha[i]>='a'&&sha[i]<='f'))) return false;
+    char expected[256];
+    snprintf(expected,sizeof(expected),RELEASE_PREFIX "%s/ascii-genesis-mid.bin",version);
+    return strcmp(url,expected)==0;
+}
+static inline bool valid_manifest(const char *board, const char *version, const char *url,
+                                  const char *sha, uint32_t size, const char *current) {
+    return valid_manifest_identity(board,version,url,sha,size)&&newer_version(version,current);
+}

@@ -1,6 +1,6 @@
 # Validation record
 
-**ASCII Genesis Mid 0.1.2**, prepared October 17, 2026.
+**ASCII Genesis Mid 0.1.3**, prepared October 17, 2026.
 
 | Check | Result |
 | --- | --- |
@@ -9,8 +9,10 @@
 | Browser: one hour, six habitats, creature clearance, pause, controls, 40 randomized starts, ordered two-creature parades | Passed |
 | Generated artwork/font assets match source | Passed |
 | Browser layout, Pause, and Settings interaction | Visually checked |
-| C touch decoder and parade tests | Passed in v0.1.1 GitHub builds; rerun for v0.1.2 |
-| C Wi-Fi status, timeout, and retry checks | Added for v0.1.2 release checks |
+| C touch decoder, parade, Wi-Fi status, timeout, and retry checks | Passed in v0.1.2 GitHub builds; included in every release |
+| C update policy: board separation, versions, HTTPS asset path, digest and size | Added to v0.1.3 release checks |
+| Published manifest, app size, and SHA-256 | Release verification required |
+| Physical wireless installation and restart | Pending first channel test |
 | Physical LCD display | Owner confirmed the aquarium appeared |
 | Physical GT911 reads and button alignment | Owner confirmed touch controls work in v0.1.1; serial log reports GT911 ID 911, 480 × 480, and touch presses |
 | Physical home Wi-Fi login and saved-network reconnect | v0.1.2 startup log confirms authentication, association, and an IP address from the home network |

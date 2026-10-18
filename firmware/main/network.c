@@ -1,5 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "network.h"
+#include "update_policy.h"
+#include "esp_app_desc.h"
+#include "esp_crt_bundle.h"
+#include "esp_http_client.h"
+#include "esp_netif_sntp.h"
+#include "esp_ota_ops.h"
+#include "psa/crypto.h"
+#include "cJSON.h"
 #include "portal_access.h"
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +35,8 @@ static char ssid[33], password[65], pending_ssid[33], pending_password[65], toke
 static bool credentials_pending;
 static int64_t portal_until;
 static int64_t connect_until,next_connect;
+typedef struct {char version[24],url[256],sha[65];uint32_t size;} manifest_t;
+static manifest_t candidate;
 
 // Called with the status lock held; keep the label and actual link in agreement.
 static void set_link(wifi_link_state_t link) {
@@ -154,10 +164,95 @@ static void open_portal(void) {
     xSemaphoreTake(lock,portMAX_DELAY);status.setup=true;strlcpy(status.ap_name,ap_name,sizeof(status.ap_name));strlcpy(status.ap_password,ap_pass,sizeof(status.ap_password));xSemaphoreGive(lock);
     portal_until=esp_timer_get_time()+600000000LL;message("Phone: join setup Wi-Fi, open 192.168.4.1");
 }
-static void check_update(void) {message("USB updates only - no published channel yet");}
-static void install_update(void) {check_update();}
+static const char *json_string(cJSON *root,const char *name) {cJSON *v=cJSON_GetObjectItemCaseSensitive(root,name);return cJSON_IsString(v)?v->valuestring:NULL;}
+static esp_http_client_handle_t https_open(const char *url) {
+    // GitHub redirects assets to signed URLs longer than the default 512-byte
+    // transmit buffer. The receive buffer does not change this request limit.
+    esp_http_client_config_t cfg={.url=url,.crt_bundle_attach=esp_crt_bundle_attach,.timeout_ms=12000,.buffer_size=4096,.buffer_size_tx=4096,.max_redirection_count=5,.user_agent="ASCII-Genesis-Mid"};
+    esp_http_client_handle_t h=esp_http_client_init(&cfg);if(!h)return NULL;
+    // esp_http_client_perform follows HTTPS redirects; streaming reads below need explicit handling.
+    for(int redirects=0;redirects<=5;redirects++) {
+        if(esp_http_client_open(h,0)!=ESP_OK)break;
+        if(esp_http_client_fetch_headers(h)<0)break;
+        int code=esp_http_client_get_status_code(h);
+        if(code==200)return h;
+        if(code!=301&&code!=302&&code!=303&&code!=307&&code!=308)break;
+        if(esp_http_client_set_redirection(h)!=ESP_OK)break;
+        if(esp_http_client_get_transport_type(h)!=HTTP_TRANSPORT_OVER_SSL)break;
+        esp_http_client_close(h);
+    }
+    esp_http_client_cleanup(h);return NULL;
+}
+static void check_update(void) {
+    net_status_t s;network_status(&s);
+    if(!s.online){message("Offline - aquarium keeps running");return;}
+    if(time(NULL)<1704067200 && esp_netif_sntp_sync_wait(pdMS_TO_TICKS(10000))!=ESP_OK){message("Clock not ready - try updates again shortly");return;}
+    xSemaphoreTake(lock,portMAX_DELAY);status.available=false;status.busy=true;xSemaphoreGive(lock);
+    message("Checking ESP32 updates...");memset(&candidate,0,sizeof(candidate));
+    esp_http_client_handle_t h=https_open(CHANNEL_URL);char body[2048];int used=0;bool complete=false,connected=h!=NULL;
+    if(h) {
+        while(used<(int)sizeof(body)-1) {int n=esp_http_client_read(h,body+used,sizeof(body)-1-used);if(n<0)break;if(n==0){complete=esp_http_client_is_complete_data_received(h);break;}used+=n;}
+        esp_http_client_cleanup(h);
+    }
+    body[used]=0;cJSON *root=complete?cJSON_Parse(body):NULL;
+    const char *version=json_string(root,"version"),*board=json_string(root,"board"),*url=json_string(root,"url"),*sha=json_string(root,"sha256");
+    cJSON *size=cJSON_GetObjectItemCaseSensitive(root,"size");
+    if(!connected)message("Update server connection failed - try again");
+    else if(!complete)message("Update download incomplete - try again");
+    else if(!root)message("Update server returned invalid data");
+    else if(root && cJSON_IsNumber(size) && size->valuedouble>=256 && size->valuedouble<=MAX_FIRMWARE_SIZE
+       && size->valuedouble==(uint32_t)size->valuedouble
+       && valid_manifest_identity(board,version,url,sha,(uint32_t)size->valuedouble)) {
+        ESP_LOGI("updates","Manifest received: v%s, %lu bytes",version,(unsigned long)size->valuedouble);
+        if(newer_version(version,esp_app_get_description()->version)){
+            strlcpy(candidate.version,version,sizeof(candidate.version));strlcpy(candidate.url,url,sizeof(candidate.url));strlcpy(candidate.sha,sha,sizeof(candidate.sha));candidate.size=(uint32_t)size->valuedouble;
+            xSemaphoreTake(lock,portMAX_DELAY);status.available=true;strlcpy(status.version,version,sizeof(status.version));xSemaphoreGive(lock);message("Update ready - tap Install to restart");
+        }else message("You have the current version");
+    } else message("No compatible release available");
+    cJSON_Delete(root);xSemaphoreTake(lock,portMAX_DELAY);status.busy=false;xSemaphoreGive(lock);
+}
+static void install_update(void) {
+    net_status_t s;network_status(&s);
+    if(!s.available||!s.online||!valid_manifest(BOARD_ID,candidate.version,candidate.url,candidate.sha,candidate.size,esp_app_get_description()->version)) {message("Check for an update while online first");return;}
+    xSemaphoreTake(lock,portMAX_DELAY);status.busy=true;status.progress=0;xSemaphoreGive(lock);
+    message("Downloading - keep power connected");
+    ESP_LOGI("updates","Installing Mid v%s",candidate.version);
+    const esp_partition_t *part=esp_ota_get_next_update_partition(NULL);
+    esp_http_client_handle_t h=https_open(candidate.url);esp_ota_handle_t ota=0;bool begun=false,okay=false;
+    psa_hash_operation_t hash=PSA_HASH_OPERATION_INIT;
+    uint32_t received=0;unsigned char digest[32];char hex[65];uint8_t chunk[4096];
+    if(!h||!part||candidate.size>part->size)goto done;
+    if(esp_http_client_get_content_length(h)!=(int64_t)candidate.size)goto done;
+    if(esp_ota_begin(part,candidate.size,&ota)!=ESP_OK)goto done;
+    begun=true;
+    if(psa_hash_setup(&hash,PSA_ALG_SHA_256)!=PSA_SUCCESS)goto done;
+    while(received<candidate.size) {
+        int n=esp_http_client_read(h,(char*)chunk,sizeof(chunk));
+        if(n<=0||(uint32_t)n>candidate.size-received)goto done;
+        if(psa_hash_update(&hash,chunk,n)!=PSA_SUCCESS||esp_ota_write(ota,chunk,n)!=ESP_OK)goto done;
+        received+=n;xSemaphoreTake(lock,portMAX_DELAY);status.progress=(int)(received*100ULL/candidate.size);xSemaphoreGive(lock);
+        vTaskDelay(1);
+    }
+    size_t digest_size=0;
+    if(psa_hash_finish(&hash,digest,sizeof(digest),&digest_size)!=PSA_SUCCESS||digest_size!=32)goto done;
+    for(int i=0;i<32;i++)snprintf(hex+i*2,3,"%02x",digest[i]);
+    if(strcmp(hex,candidate.sha))goto done;
+    {esp_err_t err=esp_ota_end(ota);begun=false;if(err!=ESP_OK)goto done;}
+    // Validate embedded version and project identity too, before changing the boot slot.
+    esp_app_desc_t app;
+    if(esp_ota_get_partition_description(part,&app)!=ESP_OK||strcmp(app.version,candidate.version)||strcmp(app.project_name,"ascii_genesis_mid"))goto done;
+    if(esp_ota_set_boot_partition(part)!=ESP_OK)goto done;
+    okay=true;
+done:
+    if(begun)esp_ota_abort(ota);
+    if(h)esp_http_client_cleanup(h);
+    psa_hash_abort(&hash);
+    if(okay){ESP_LOGI("updates","Verified %lu bytes; restarting into Mid v%s",(unsigned long)received,candidate.version);message("Verified - restarting aquarium");vTaskDelay(pdMS_TO_TICKS(1500));esp_restart();}
+    ESP_LOGW("updates","Installation failed after %lu of %lu bytes; current app kept",(unsigned long)received,(unsigned long)candidate.size);
+    message("Update failed - current version kept");xSemaphoreTake(lock,portMAX_DELAY);status.busy=false;status.progress=0;xSemaphoreGive(lock);
+}
 static void network_task(void *arg) {
-    (void)arg;connect_saved();
+    (void)arg;connect_saved();int64_t next_check=esp_timer_get_time()+45000000LL;
     while(true) {
         net_command_t cmd;
         if(xQueueReceive(commands,&cmd,pdMS_TO_TICKS(250))) {
@@ -181,9 +276,11 @@ static void network_task(void *arg) {
             xSemaphoreGive(lock);
         }
         if(!s.setup&&ssid[0]&&wifi_link_retry_due(s.link,now,next_connect))connect_saved();
+        if(s.online&&!s.setup&&now>=next_check){check_update();next_check=now+86400000000LL;}
     }
 }
 void network_start(void) {
+    ESP_ERROR_CHECK(psa_crypto_init()==PSA_SUCCESS?ESP_OK:ESP_FAIL);
     lock=xSemaphoreCreateMutex();commands=xQueueCreate(4,sizeof(net_command_t));assert(lock&&commands);
     message("Offline aquarium ready");
     nvs_handle_t nvs;if(nvs_open("wifi4848",NVS_READONLY,&nvs)==ESP_OK){size_t n=sizeof(ssid);nvs_get_str(nvs,"ssid",ssid,&n);n=sizeof(password);nvs_get_str(nvs,"password",password,&n);nvs_close(nvs);}
@@ -192,5 +289,6 @@ void network_start(void) {
     wifi_init_config_t cfg=WIFI_INIT_CONFIG_DEFAULT();ESP_ERROR_CHECK(esp_wifi_init(&cfg));
     ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT,ESP_EVENT_ANY_ID,wifi_event,NULL));ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT,IP_EVENT_STA_GOT_IP,wifi_event,NULL));
     ESP_ERROR_CHECK(esp_wifi_set_storage(WIFI_STORAGE_RAM));ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));ESP_ERROR_CHECK(esp_wifi_start());
+    esp_sntp_config_t clock_config=ESP_NETIF_SNTP_DEFAULT_CONFIG("pool.ntp.org");ESP_ERROR_CHECK(esp_netif_sntp_init(&clock_config));
     if(xTaskCreate(network_task,"wifi_updates",16384,NULL,3,NULL)!=pdPASS)ESP_ERROR_CHECK(ESP_ERR_NO_MEM);
 }

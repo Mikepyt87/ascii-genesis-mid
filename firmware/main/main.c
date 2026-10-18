@@ -122,7 +122,7 @@ static void draw_settings(net_status_t *n){
       rect(0,98,320,32,rgb(0x102631));
       if(n->busy){snprintf(line,sizeof(line),"PLEASE WAIT  %d%%",n->progress);text(line,20,110,c);}
       else if(n->available){snprintf(line,sizeof(line),"INSTALL v%s & RESTART",n->version);text(line,20,110,c);}
-      else text("USB UPDATES ONLY",20,110,c);
+      else text("CHECK FOR UPDATES",20,110,c);
     }
     rect(0,288,320,32,rgb(0x102631));text("BACK TO OCEAN",118,301,c);
 }

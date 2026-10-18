@@ -49,7 +49,11 @@ Record any screen shift, flicker, mirrored picture, wrong touch position, or res
 
 In **Settings → Set up Wi-Fi with phone**, join **ASCII-Genesis-Mid-XXXX** with the password shown on screen. Open **http://192.168.4.1**, enter your 2.4 GHz network name and password, and save. Rejoin your regular network. The aquarium shows **Wi-Fi Connected** when it receives a network address. If connection fails, the screen gives a reason and you can reopen setup to try again. Setup closes after ten minutes or when you return to the ocean.
 
-Wi-Fi is optional. v0.1.2 has no online features beyond joining your network and the temporary local setup page. **USB Updates Only** is a status button; it cannot install another board's firmware.
+Wi-Fi is optional. Once connected, open **Settings → Check for Updates**. If a newer Mid version is available, tap **Install** and keep power connected while it downloads and restarts. The aquarium also checks after startup and once a day; it never installs without your tap.
+
+Boards running **v0.1.2 or earlier** need one USB installation of v0.1.3 or newer to add wireless updates. Future updates can then be installed from the screen. Only matching Mid firmware is accepted; Mini firmware uses a separate channel.
+
+The download is checked before the board switches to it. The old app stays in the other slot, and a new app must complete its startup check before it is accepted. USB recovery remains available below.
 
 ## Recover or restore
 

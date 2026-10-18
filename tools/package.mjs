@@ -24,15 +24,16 @@ if(result.status!==0)throw Error('esptool image merge failed');
 fs.writeFileSync(path.join(out,'flasher_args.json'),JSON.stringify(flash,null,2)+'\n');
 // Include the corresponding source and its notices with the install image.
 for(const dir of ['art','preview','docs','tools','.github','firmware/main'])fs.cpSync(path.join(root,dir),path.join(out,dir),{recursive:true});
-for(const f of ['INSTALL.md','README.md','DEVELOPMENT.md','HARDWARE.md','VALIDATION.md','CHANGELOG.md','LICENSE','THIRD-PARTY.md','CREDITS.md','.gitignore','.gitattributes','firmware/CMakeLists.txt','firmware/partitions.csv','firmware/sdkconfig.defaults']){
+for(const f of ['INSTALL.md','README.md','DEVELOPMENT.md','HARDWARE.md','VALIDATION.md','CHANGELOG.md','LICENSE','THIRD-PARTY.md','CREDITS.md','.gitignore','.gitattributes','firmware/CMakeLists.txt','firmware/dependencies.lock','firmware/partitions.csv','firmware/sdkconfig.defaults']){
  fs.mkdirSync(path.dirname(path.join(out,f)),{recursive:true});fs.copyFileSync(path.join(root,f),path.join(out,f));
 }
 const sha=filename=>crypto.createHash('sha256').update(fs.readFileSync(filename)).digest('hex');
-const names=[...Object.values(flash.flash_files),'ascii-genesis-mid-usb.bin'];
+fs.copyFileSync(path.join(out,'ascii_genesis_mid.bin'),path.join(out,'ascii-genesis-mid.bin'));
+const names=[...Object.values(flash.flash_files),'ascii-genesis-mid-usb.bin','ascii-genesis-mid.bin'];
 const idfPath=project.idf_path;
 const versionSource=process.env.MID_IDF_VERSION?'':fs.readFileSync(path.join(idfPath,'tools/cmake/version.cmake'),'utf8');
 const idf=process.env.MID_IDF_VERSION||['MAJOR','MINOR','PATCH'].map(key=>versionSource.match(new RegExp('set\\(IDF_VERSION_'+key+'\\s+(\\d+)\\)'))?.[1]??'?').join('.');
-const manifest={name:'ASCII Genesis Mid',version:project.project_version,board:'guition-esp32-4848s040',status:'release',idf,project:'ascii_genesis_mid',usb_address:'0x0',wireless_updates:false,files:names.map(file=>({file,size:fs.statSync(path.join(out,file)).size,sha256:sha(path.join(out,file))}))};
+const manifest={name:'ASCII Genesis Mid',version:project.project_version,board:'guition-esp32-4848s040',status:'release',idf,project:'ascii_genesis_mid',usb_address:'0x0',wireless_updates:true,files:names.map(file=>({file,size:fs.statSync(path.join(out,file)).size,sha256:sha(path.join(out,file))}))};
 fs.writeFileSync(path.join(out,'build-info.json'),JSON.stringify(manifest,null,2)+'\n');
 fs.writeFileSync(path.join(out,'SHA256SUMS.txt'),manifest.files.map(f=>`${f.sha256}  ${f.file}`).join('\n')+'\n');
 console.log(`Packaged ASCII Genesis Mid v${manifest.version}: ${merged}`);

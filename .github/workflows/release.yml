@@ -30,6 +30,7 @@ jobs:
           node -e 'if(!/^\d{1,5}\.\d{1,5}\.\d{1,5}$/.test(process.env.VERSION))process.exit(1)'
           printf '%s' "$VERSION" > firmware/release-version.txt
       - run: node preview/check.mjs && node tools/generate-assets.mjs --check
+      - run: gcc -std=c11 -Wall -Wextra -Werror tools/policy-check.c -o /tmp/policy-check && /tmp/policy-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/wifi-check.c -o /tmp/wifi-check && /tmp/wifi-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/touch-check.c -o /tmp/touch-check && /tmp/touch-check
       - run: gcc -std=c11 -Wall -Wextra -Werror tools/parade-check.c -lm -o /tmp/parade-check && /tmp/parade-check
@@ -50,7 +51,8 @@ jobs:
         run: |
           node tools/package.mjs firmware/build
           mkdir -p publish
-          cp release/ascii-genesis-mid-usb.bin publish/
+          cp release/ascii-genesis-mid-usb.bin release/ascii-genesis-mid.bin publish/
+          node tools/make-manifest.mjs "$VERSION" release/ascii-genesis-mid.bin publish/manifest.json
           cp release/build-info.json release/SHA256SUMS.txt publish/
           node tools/make-release-notes.mjs "$VERSION" publish/RELEASE-NOTES.md
           cd release
@@ -81,3 +83,7 @@ jobs:
             exit 1
           fi
           gh release create "$tag" publish/* --target "$GITHUB_SHA" --title "ASCII Genesis Mid v$VERSION" --notes-file publish/RELEASE-NOTES.md --latest
+          if ! gh release view mid-stable >/dev/null 2>&1; then
+            gh release create mid-stable --target "$GITHUB_SHA" --title "Mid wireless update channel" --notes "Current firmware manifest for GUITION ESP32-4848S040. Mini and Pi use separate update channels." --latest=false
+          fi
+          gh release upload mid-stable publish/manifest.json --clobber
