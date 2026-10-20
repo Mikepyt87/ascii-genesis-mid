@@ -18,7 +18,7 @@ We call ASCII Genesis an **ocean**: its creatures travel through a scrolling wor
 | --- | --- |
 | Building the Mid ocean for the first time | Follow [Mid installation and first startup](INSTALL.md) from the hardware check onward |
 | Checking the board and wiring | Follow [board identification and pin assignments](HARDWARE.md); use the GUITION model listed below |
-| Already installed and want new creatures | Connect Wi-Fi, open **Settings → Check for Updates → Install**, and keep power connected; see [wireless updates](INSTALL.md#wi-fi-setup) |
+| Already installed and want new creatures | Connect Wi-Fi, open **Settings → Check for Updates → Install**, and keep power connected; see [wireless updates](docs/UPDATES.md) |
 | Want to see the artwork and behavior | Open the [browser preview](DEVELOPMENT.md) or browse the [shared creature artwork library](https://github.com/Mikepyt87/ascii-genesis-mini/blob/main/docs/OCEAN-LIBRARY.md); Mid's timing and layout are described below |
 | Have the little ESP32-S3 1.47-inch screen or a Raspberry Pi | Use the [Mini installation guide](https://github.com/Mikepyt87/ascii-genesis-mini/blob/main/docs/INSTALL.md) or [Pi installation guide](https://github.com/Mikepyt87/ascii-genesis/blob/main/raspberry-pi/SETUP.md) for that edition |
 
@@ -38,7 +38,7 @@ Use the [complete guide](INSTALL.md) to check the board, identify its USB port, 
 
 ```powershell
 py -m venv .flash-tools
-.\.flash-tools\Scripts\python.exe -m pip install esptool
+.\.flash-tools\Scripts\python.exe -m pip install esptool==5.6.0
 .\.flash-tools\Scripts\python.exe -m esptool --chip esp32s3 --port COM7 --baud 460800 write-flash --flash-mode dio --flash-size 16MB --flash-freq 80m 0x0 ascii-genesis-mid-usb.bin
 ```
 
@@ -60,7 +60,7 @@ The image is a generated preview from the current renderer, not a photograph of 
 
 ## Updates and source
 
-The Mid updater follows this repository's wireless update channel. Connect home Wi-Fi or a 2.4 GHz hotspot, then use **Settings → Check for Updates → Install**. Keep power connected through the restart and for at least 30 seconds afterward. It checks for releases automatically but waits for you to choose Install. [The installation and update guide](INSTALL.md) covers Wi-Fi setup and recovery.
+The Mid updater follows this repository's wireless update channel. Connect home Wi-Fi or a 2.4 GHz hotspot, then use **Settings → Check for Updates → Install**. Keep power connected through the restart and for at least 30 seconds afterward. It checks for releases automatically but waits for you to choose Install. See [Wi-Fi setup](docs/WIFI.md), [updates](docs/UPDATES.md), [controls](docs/CONTROLS.md), and [troubleshooting](docs/TROUBLESHOOTING.md).
 
 Current firmware: **v0.1.9**. Use a numbered [release](https://github.com/Mikepyt87/ascii-genesis-mid/releases) for installable firmware; [CHANGELOG.md](CHANGELOG.md) records the changes. The [validation record](VALIDATION.md) separates software checks from physical-board confirmation. Boards on v0.1.2 or earlier need one USB installation of v0.1.3 or newer before wireless updates are available. Mid accepts its own firmware and uses a separate channel from Mini.
 

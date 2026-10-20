@@ -1,9 +1,23 @@
 # Preview, build, and checks
 
-Use Node.js 20 or newer. No npm dependencies are required.
+Use Node.js 20 or newer and Git. No npm dependencies are required.
+
+Clone the project and enter its folder:
+
+```text
+git clone https://github.com/Mikepyt87/ascii-genesis-mid.git ASCII-Genesis-Mid
+cd ASCII-Genesis-Mid
+```
+
+All following commands run from this folder unless stated otherwise. Start the preview in one terminal:
 
 ```text
 node preview/serve.mjs
+```
+
+Leave that terminal open. In a second terminal in the same project folder, run the checks:
+
+```text
 node preview/check.mjs
 node tools/generate-scenes.mjs --check
 node tools/build-scenes-tour.mjs --check
@@ -19,7 +33,7 @@ Edit drawings in `art/original-fish.mjs`, then run `node art/restore-sprites.mjs
 
 ## Firmware
 
-Use **ESP-IDF 6.1** for ESP32-S3. Open its terminal, then:
+Install **ESP-IDF 6.1** using [Espressif’s ESP32-S3 setup guide](https://docs.espressif.com/projects/esp-idf/en/v6.1/esp32s3/get-started/index.html). Open its supplied terminal, check `idf.py --version`, and enter this repository’s root folder, then:
 
 ```text
 cd firmware
@@ -37,7 +51,7 @@ node tools/package.mjs firmware/build
 
 Run this in the ESP-IDF terminal so `python -m esptool` is available. Pass a different build directory as the first argument if needed. Output goes to `release/`, which is ignored by Git.
 
-To flash from source, first save the factory firmware as described in INSTALL.md, then run `idf.py -p COM7 flash monitor` in the firmware folder. Use this build's offsets rather than the Mini's.
+To flash from source, first save the factory firmware as described in INSTALL.md, then run `idf.py -p COM7 flash monitor` in the firmware folder. Replace COM7 with the actual port. Exit the monitor with Ctrl+] before flashing again. Use this build’s offsets rather than the Mini’s.
 
 The partition layout keeps two 6 MB app slots. The updater fetches `manifest.json` from the `mid-stable` GitHub release. It accepts only newer numeric X.Y.Z versions, the GUITION board ID, and the exact Mid release asset path. HTTPS certificate checks, size, SHA-256, embedded project name, and embedded version must pass before switching slots. Startup validation accepts the app after 30 seconds of successful operation; rollback is enabled. Wi-Fi credentials use the separate `wifi4848` NVS namespace. The setup page accepts connections only on the temporary setup interface and checks a per-session form token.
 

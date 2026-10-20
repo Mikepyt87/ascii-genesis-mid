@@ -1,66 +1,133 @@
-# Install ASCII Genesis Mid
+# First installation over USB
 
-This guide is for the **GUITION ESP32-4848S040, ESP32-S3 N16R8**. The current release is **v0.1.9**; see the [new scenes guide](docs/SURFACE-SCENES.md) and [release history](CHANGELOG.md). v0.1.3 was installed over Wi-Fi on the owner's board; the owner confirmed the ocean returned, and its log confirmed the new version and home Wi-Fi reconnect. See VALIDATION.md for the checks performed.
+Use this guide for a new board, a board running another project, or USB recovery. If your Mid already runs v0.1.3 or later, try [wireless updating](docs/UPDATES.md) first.
 
-## What you need
+## 1. Check the board
 
-- The assembled GUITION display.
-- A USB data cable and computer.
-- Python with Espressif's flashing tool: `python -m pip install esptool`.
-- The extracted Mid installation package.
+The supported model is **GUITION ESP32-4848S040, ESP32-S3 N16R8**: 16 MB flash, 8 MB PSRAM, a 4-inch 480 × 480 ST7701 display, and GT911 touch. Check the board marking, not only the seller’s screen size. See [Hardware](HARDWARE.md). Do not flash firmware for the Mini or a different ESP32 screen.
 
-Unplug the board, check the computer's serial-port list, then plug it in and find the new port. On Windows it will usually have a name such as COM7. The board in the photo uses a USB-to-serial chip; choose that port.
+Put the board on a dry, nonconductive surface. Use a known USB data cable connected directly to the computer. The board must stay powered while writing firmware.
 
-If it will not connect, hold **BOOT**, press and release **RST**, then release BOOT. Try again with a data cable.
+![Download the complete image, open its folder, find the port, flash, and restart](docs/images/usb-install.svg)
 
-## Save the factory software first
+## 2. Download the right file
 
-From the extracted installation folder, run the following command, replacing COM7 with your port:
+1. Open [ASCII Genesis - Mid releases](https://github.com/Mikepyt87/ascii-genesis-mid/releases).
+2. Choose the highest **numbered** release, currently [mid-v0.1.9](https://github.com/Mikepyt87/ascii-genesis-mid/releases/tag/mid-v0.1.9). Release-list order is not always version order.
+3. Expand **Assets** if necessary.
+4. Download **ascii-genesis-mid-usb.bin**. This is the complete first-install image.
+5. Create `ASCII-Genesis-Mid` inside your Windows Downloads folder and put the file there. Check that the filename is exactly `ascii-genesis-mid-usb.bin`, without a second `.bin` or a download suffix.
 
-```text
-python -m esptool --chip esp32s3 --port COM7 read-flash 0 0x1000000 factory-backup.bin
+| Download | Purpose |
+| --- | --- |
+| **ascii-genesis-mid-usb.bin** | Complete USB image; write at **0x0** |
+| `ascii-genesis-mid.bin` | Application-only image for the wireless updater; not a complete USB image |
+| `ASCII-Genesis-Mid-vX.Y.Z.zip` | Packaged firmware and matching source; extract it first, then locate the complete USB image |
+| `SHA256SUMS.txt` / `build-info.json` | Package checksums and build information |
+| `manifest.json` | Version, board ID, download address, size, and checksum for the updater |
+| Source code ZIP/tar.gz | Source for developers; cannot be flashed as firmware |
+| `mid-stable` | Channel pointer used by the device; choose a numbered release for USB installation |
+
+## 3. Install the flashing tool on Windows
+
+You do **not** need to install the complete ESP-IDF compiler to use a downloaded release.
+
+1. Install Python 3.10 or newer from [python.org](https://www.python.org/downloads/windows/) if it is not installed.
+2. Open **Windows PowerShell** from the Start menu.
+3. Check Python:
+
+```powershell
+py --version
 ```
 
-Keep that full 16 MB backup somewhere safe. It may contain settings from the existing software, so keep it private.
+If `py` is not recognized, reopen PowerShell after installing Python. If your installation provides `python` instead, use `python --version` to check it and `python -m venv .flash-tools` to create the environment.
 
-## Install
+4. In File Explorer, open the folder containing the `.bin` file. Click its address bar, type `powershell`, and press Enter. That opens PowerShell in the right folder, even if your Downloads folder is on another drive.
+5. Run these commands one line at a time. Do not type the `PS C:\...>` prompt itself:
 
-The package includes **ascii-genesis-mid-usb.bin**, a combined image containing the bootloader, partition table, startup metadata, and application. Write it at **0x0**:
-
-```text
-python -m esptool --chip esp32s3 --port COM7 --baud 460800 write-flash --flash-size 16MB 0x0 ascii-genesis-mid-usb.bin
+```powershell
+py -m venv .flash-tools
+.\.flash-tools\Scripts\python.exe -m pip install esptool==5.6.0
+Get-Item .\ascii-genesis-mid-usb.bin
 ```
 
-This replaces the board's current program. Leave power connected. Press RST if it does not restart automatically. The ocean should appear and its controls should fade after eight seconds. GPIO19 is reserved for touch; the firmware uses the UART bridge instead of the native USB console.
+The last command should list your downloaded file. If it cannot find it, open PowerShell in the correct folder or move the download there.
 
-The separate application file is for developers. It is not a complete installation image and must not be flashed at address zero.
+These commands install the flashing utility in this folder. They do not flash the board. Calling the environment's Python directly avoids changing PowerShell execution policy. Do not upgrade tools inside an existing ESP-IDF environment with this command; use this separate environment instead.
 
-## First board check
+## 4. Find the USB port
 
-1. Confirm the picture is upright and its colors look right.
-2. Tap the water, then try Pause, New World, Parade, and Settings.
-3. Confirm touch lines up with all four buttons.
-4. Leave it powered for at least 30 seconds, restart it, and check it returns to the ocean.
-5. Try Wi-Fi setup if wanted.
+1. Connect the board with the data cable.
+2. Open **Device Manager → Ports (COM & LPT)**.
+3. Note the port that appears, such as **COM7**. Unplug/reconnect once if needed to identify it.
+4. Close any serial monitor using that port. In an ESP-IDF monitor, use **Ctrl+]** to exit.
 
-Record any screen shift, flicker, mirrored picture, wrong touch position, or restart. These are the main things the first hardware test needs to confirm.
+You can also list ports from the same PowerShell window:
+
+```powershell
+.\.flash-tools\Scripts\python.exe -m serial.tools.list_ports
+```
+
+If there is no new port, try another data cable and direct USB port. Check the [board references](HARDWARE.md#references) for USB-serial driver information. The board uses its USB-to-serial bridge.
+
+## Optional: keep a factory backup
+
+Before replacing a program you may want back, save all 16 MB of flash from the same PowerShell window, using your actual port:
+
+```powershell
+.\.flash-tools\Scripts\python.exe -m esptool --chip esp32s3 --port COM7 read-flash 0x0 0x1000000 factory-backup.bin
+```
+
+Wait for successful completion. Keep the backup private; it may contain saved settings. Use a different filename if you already have a backup to keep. To restore it later, run the command below with your actual port. This replaces the ocean and settings with the saved program, preserving the backup’s flash mode and frequency:
+
+```powershell
+.\.flash-tools\Scripts\python.exe -m esptool --chip esp32s3 --port COM7 write-flash 0x0 factory-backup.bin
+```
+
+## 5. Flash the complete image
+
+Run this from the folder containing `ascii-genesis-mid-usb.bin`. **Replace COM7 with the port you found.**
+
+```powershell
+.\.flash-tools\Scripts\python.exe -m esptool --chip esp32s3 --port COM7 --baud 460800 write-flash --flash-mode dio --flash-size 16MB --flash-freq 80m 0x0 ascii-genesis-mid-usb.bin
+```
+
+The offset **0x0** is correct only for the complete `ascii-genesis-mid-usb.bin` image. Do not substitute the application-only file. A full merged USB image can overwrite saved Wi-Fi settings; be ready to enter them again. Wireless updates preserve the saved settings.
+
+Wait for **Hash of data verified** and completion. Do not disconnect power while the progress bar is moving. If connection fails, hold **BOOT**, press and release **RST**, then release BOOT and retry. The USB port may change in download mode; check it again.
+
+If writing repeatedly fails, try a shorter data cable or replace `460800` with `115200`.
+
+If the board remains in download mode after a successful flash, press RST once without holding BOOT.
+
+## 6. Verify the first startup
+
+1. Confirm that the ocean picture is upright and fills the square 480 × 480 screen.
+2. Tap the water once and lift your finger. Confirm four buttons appear.
+3. Tap Pause, then Resume. Try New World.
+4. Tap Parade. A creature should enter from the left; the top-left counter shows its place in the collection. Tap Return to stop early.
+5. Open Settings and confirm the release version.
+6. Leave it powered for **at least 30 seconds after startup** before unplugging or restarting. New firmware is accepted after its display/touch/render loop succeeds for that period.
+
+Wi-Fi is optional. Continue with [Wi-Fi and phone hotspots](docs/WIFI.md) if you want updates. If the screen is blank, touch does not respond, or the device keeps rebooting, use [Troubleshooting](docs/TROUBLESHOOTING.md).
+
+## Linux or macOS
+
+Download the same complete image. Open Terminal and change into the folder containing `ascii-genesis-mid-usb.bin` (for example, `cd ~/Downloads/ASCII-Genesis-Mid`). Install Python 3.10+ and create an environment there:
+
+```bash
+python3 -m venv .flash-tools
+.flash-tools/bin/python -m pip install esptool==5.6.0
+.flash-tools/bin/python -m serial.tools.list_ports
+.flash-tools/bin/python -m esptool --chip esp32s3 --port /dev/ttyACM0 --baud 460800 write-flash --flash-mode dio --flash-size 16MB --flash-freq 80m 0x0 ascii-genesis-mid-usb.bin
+```
+
+Replace `/dev/ttyACM0` with the actual listed port. On macOS it may start with `/dev/cu.`; on Linux the serial bridge may appear as `/dev/ttyUSB0`. On Linux your account may need serial-port group access; follow your distribution's instructions, then sign out/in. Do not guess the port or image offset.
+
+References: [Espressif esptool installation](https://docs.espressif.com/projects/esptool/en/latest/esp32s3/installation.html), [flashing firmware](https://docs.espressif.com/projects/esptool/en/latest/esp32s3/esptool/flashing-firmware.html), [board references](HARDWARE.md#references).
 
 ## Wi-Fi setup
 
-In **Settings → Set up Wi-Fi with phone**, join **ASCII-Genesis-Mid-XXXX** with the password shown on screen. Open **http://192.168.4.1**, enter your 2.4 GHz network name and password, and save. Rejoin your regular network. The ocean shows **Wi-Fi Connected** when it receives a network address. If connection fails, the screen gives a reason and you can reopen setup to try again. Setup closes after ten minutes or when you return to the ocean.
+Follow [Home Wi-Fi and phone hotspots](docs/WIFI.md), then [Wireless updates](docs/UPDATES.md). Confirm **Wi-Fi online on the board’s Settings screen**. A phone connected to the temporary setup network does not prove that the board joined your home network.
 
-Wi-Fi is optional. Once connected, open **Settings → Check for Updates**. If a newer Mid version is available, tap **Install** and keep power connected while it downloads and restarts. The ocean also checks after startup and once a day; it never installs without your tap.
-
-Boards running **v0.1.2 or earlier** need one USB installation of v0.1.3 or newer to add wireless updates. Future updates can then be installed from the screen. Only matching Mid firmware is accepted; Mini firmware uses a separate channel.
-
-The download is checked before the board switches to it. The old app stays in the other slot, and a new app must complete its startup check before it is accepted. USB recovery remains available below.
-
-## Recover or restore
-
-To reinstall Mid, repeat the installation command. To restore the factory backup:
-
-```text
-python -m esptool --chip esp32s3 --port COM7 write-flash --flash-size 16MB 0x0 factory-backup.bin
-```
-
-For a startup log, run `python -m serial.tools.miniterm COM7 115200` if pyserial is installed, then press RST. Close the monitor before flashing again.
+For everyday operation, see [Controls](docs/CONTROLS.md). [Validation](VALIDATION.md) separates software checks from earlier physical-board tests.

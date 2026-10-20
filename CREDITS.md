@@ -2,7 +2,7 @@
 
 ASCII Genesis Mid is the GUITION 4-inch edition of ASCII Genesis, created by Mikepyt87 with assistance from OpenAI tools. It starts from ASCII Genesis Mini v0.1.7's artwork, renderer, parade, and Wi-Fi setup, with a separate board layer and square layout. The Mini source used was commit 790d6b4.
 
-**Kirk Baucom** created Asciiquarium. Most upstream art is credited to **Joan Stark**; **Claudio Matsuoka** expanded its biodiversity. The [upstream source](art/asciiquarium-upstream.pl) and [artwork license](art/LICENSE.txt) are included.
+**Kirk Baucom** created [Asciiquarium](https://github.com/cmatsuoka/asciiquarium). Most upstream art is credited to **Joan Stark**; **Claudio Matsuoka** expanded its biodiversity. The [upstream source](art/asciiquarium-upstream.pl) and [artwork license](art/LICENSE.txt) are included.
 
 Original ASCII Genesis additions include the puffer, bannerfish, spearfish, moray, ray, lanternfish, squid, octopus, turtle, jellyfish, crab, lobster, shark, whale, submarine, lionfish, and peacock mantis shrimp. Their source drawings are in [original-fish.mjs](art/original-fish.mjs), with the generated collection in [fish-art.js](art/fish-art.js).
 

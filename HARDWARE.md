@@ -1,6 +1,6 @@
 # GUITION board configuration
 
-The identification photo shows **GUITION ESP32-4848S040**, **ESP32-S3 N16R8**, a 40-pin LCD ribbon, touch ribbon, BOOT/RST buttons, and a CH340 USB-to-serial bridge. The controller and pin configuration below come from published support for that model. Their operation on this assembly is pending a board test.
+The owner’s identification photo showed **GUITION ESP32-4848S040**, **ESP32-S3 N16R8**, a 40-pin LCD ribbon, touch ribbon, BOOT/RST buttons, and a CH340 USB-to-serial bridge. The controller and pin configuration below come from published support for that model. The owner confirmed the display, corrected touch controls, home Wi-Fi, and wireless installation on earlier builds. See [Validation](VALIDATION.md) for exact versions and the checks still pending on current firmware.
 
 | Part | Configuration |
 | --- | --- |
@@ -22,7 +22,7 @@ The RGB panel uses 10 MHz PCLK, horizontal front/pulse/back 10/8/50, vertical 10
 
 GT911 register addresses are sent high byte first (0x81, 0x4E), while coordinate values are decoded low byte first. Touch reads status at 0x814E and the first point's X/Y at 0x8150. Fresh reports are acknowledged by clearing status. A report with no points releases touch; no fresh report preserves its previous state. Picture enlargement and touch conversion use the same 480-to-320 ratio.
 
-The screen scans continuously while the app copies frames. Check for visible tearing during the board test. Timing and orientation are provisional. The initial port uses the unrotated Guition sequence; display and touch may need matched transforms if the assembly's orientation differs.
+The screen scans continuously while the app copies frames. Longer-term tearing and power behavior still need physical testing. This configuration uses the unrotated Guition sequence; if a different board revision needs rotation, display and touch transforms must change together. These are internal connections, not wiring the owner needs to add.
 
 ## References
 

@@ -24,7 +24,7 @@ if(result.status!==0)throw Error('esptool image merge failed');
 fs.writeFileSync(path.join(out,'flasher_args.json'),JSON.stringify(flash,null,2)+'\n');
 // Include the corresponding source and its notices with the install image.
 for(const dir of ['art','preview','docs','tools','.github','firmware/main'])fs.cpSync(path.join(root,dir),path.join(out,dir),{recursive:true});
-for(const f of ['INSTALL.md','README.md','DEVELOPMENT.md','HARDWARE.md','VALIDATION.md','CHANGELOG.md','LICENSE','THIRD-PARTY.md','CREDITS.md','.gitignore','.gitattributes','firmware/CMakeLists.txt','firmware/dependencies.lock','firmware/partitions.csv','firmware/sdkconfig.defaults']){
+for(const f of ['INSTALL.md','CONTRIBUTING.md','README.md','DEVELOPMENT.md','HARDWARE.md','VALIDATION.md','CHANGELOG.md','LICENSE','THIRD-PARTY.md','CREDITS.md','.gitignore','.gitattributes','firmware/CMakeLists.txt','firmware/dependencies.lock','firmware/partitions.csv','firmware/sdkconfig.defaults']){
  fs.mkdirSync(path.dirname(path.join(out,f)),{recursive:true});fs.copyFileSync(path.join(root,f),path.join(out,f));
 }
 const sha=filename=>crypto.createHash('sha256').update(fs.readFileSync(filename)).digest('hex');
