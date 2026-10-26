@@ -1,6 +1,13 @@
 # Validation record
 
-## Current release: v0.1.10 — October 25, 2026
+## Current release: v0.1.11 — October 25, 2026
+
+The revised celebrations surround and follow the entire signature fish, start only after full entry, and keep a clear gap from bodies and controls. Browser simulation, both directions, all four sides, spacing, pause/return, three-second expiry, native C checks, and the [release build and publication](https://github.com/Mikepyt87/ascii-genesis-mid/actions/runs/40263280577) passed. All three Mini effects were visually inspected in the local preview. Swimming speeds are unchanged.
+
+The live wireless manifest, application, and USB image were downloaded and verified for board ID, exact versioned URL, SHA-256, embedded project/version, **1,124,944 application bytes**, and matching application bytes inside the USB image at 0x20000. Physical-board confirmation of these revised effects remains pending.
+
+
+## Previous release: v0.1.10 — October 25, 2026
 
 The three signature fish and entrance effects passed the browser simulation, full parade, spacing, pause/return, documentation, and native C effect checks. The [firmware build and publication](https://github.com/Mikepyt87/ascii-genesis-mid/actions/runs/40260751514) passed. The live update manifest and both application and USB images were downloaded and checked for board ID, versioned URL, byte count (**1,124,704 application bytes**), SHA-256, embedded project/version, and identical application bytes within the USB image at 0x20000.
 
