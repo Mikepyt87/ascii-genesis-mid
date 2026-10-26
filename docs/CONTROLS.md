@@ -13,7 +13,7 @@ Tap the ocean and lift your finger. Four buttons appear along the bottom. They f
 
 For the shared drawings and colors, see the [Mini artwork library](https://github.com/Mikepyt87/ascii-genesis-mini/blob/main/docs/OCEAN-LIBRARY.md). The Mid’s layout and timing are described here. Normal swimmers move at 9–18 logical pixels per second in current firmware; the parade keeps its own timing below.
 
-The Mid shows **all 28 designs in their original order**, facing right, with up to two at a time. Each crosses in six seconds, with the next entering after three seconds when the two drawings fit in separate bands. The full sequence lasts **99 seconds: 1 minute 39 seconds**. The counter appears at the top left. Names appear on separate lines at the top right. From v0.1.5, names are larger and use brighter text; the counter stays separate.
+The Mid shows **all 31 designs in their original order**, facing right, with up to two at a time. Each crosses in six seconds, with the next entering after three seconds when the two drawings fit in separate bands. The full sequence lasts **99 seconds: 1 minute 39 seconds**. The counter appears at the top left. Names appear on separate lines at the top right. From v0.1.5, names are larger and use brighter text; the counter stays separate.
 
 Tall neighboring drawings that cannot share the screen wait for one another, so their drawings and bobbing never overlap. The regular ocean is held in place during the parade: its creatures, camera position, bubbles, pending arrivals, and random state are preserved. It resumes automatically at the end. Return ends the parade early without resetting that ocean.
 

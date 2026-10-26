@@ -7,7 +7,7 @@ import './ocean-scenes.js';
 import './ocean.js';
 const {MiniOcean,render,bandsClear,W,H,SWIM_BOTTOM}=globalThis.MiniAquarium;
 const sprites=globalThis.AsciiquariumSprites,ocean=new MiniOcean(sprites,4848);
-assert.equal(W,320);assert.equal(H,320);assert.equal(sprites.length,56);
+assert.equal(W,320);assert.equal(H,320);assert.equal(sprites.length,62);
 const visited=new Set();let rendered=0;
 const ctx={fillRect(){rendered++;},save(){},restore(){},beginPath(){},rect(){},clip(){}};
 for(let frame=0;frame<36000;frame++){
@@ -29,7 +29,7 @@ assert.ok(network.includes('CHANNEL_URL')&&network.includes('esp_ota_begin'));
 const policy=fs.readFileSync(new URL('../firmware/main/update_policy.h',import.meta.url),'utf8');
 assert.ok(policy.includes('guition-esp32-4848s040')&&policy.includes('mid-stable')&&!policy.includes('ascii-genesis-mini'));
 assert.ok(network.includes('ASCII-Genesis-Mid'));
-console.log('PASS: one simulated hour, square layout, all habitats, creature clearance, pause, controls, 28-creature parade, and board-specific wireless update policy.');
+console.log('PASS: one simulated hour, square layout, all habitats, creature clearance, pause, controls, 31-creature parade, and board-specific wireless update policy.');
 
 const {checkScenes}=await import('./scenes-check.mjs');checkScenes(globalThis.MiniAquarium,sprites);
 

@@ -1,5 +1,11 @@
 # Changes
 
+## 0.1.10
+
+- Adds Balance Angelfish, Steadfast Marlin, and Spark Wrasse to the normal ocean and parade (31 designs).
+- Adds distinct three-second entrance celebrations, in both directions, with particles kept clear of fish and controls. Pause freezes the effects.
+- Keeps existing swimming and scenery speeds.
+
 ## 0.1.9
 
 - Keeps the shore crab, reef lobster, peacock mantis shrimp, and violet octopus on the scrolling seabed in the normal ocean and parade.
