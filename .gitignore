@@ -7,3 +7,4 @@ release/
 backups/
 *.wasm
 *.exe
+*.log

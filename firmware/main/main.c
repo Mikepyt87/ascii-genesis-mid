@@ -18,6 +18,7 @@
 #include "ocean_geometry.h"
 #include "parade.h"
 #include "ocean_scenes.h"
+#include "celebration.h"
 static uint16_t *fb;
 static float time_s,controls_until=8;
 static bool paused;
@@ -28,6 +29,8 @@ static int screen; // 0 ocean, 1 settings, 2 phone setup
 typedef struct {int art,dir;float x,y,speed,phase;bool active;} swimmer_t;
 static swimmer_t fish[3];
 static int pending_art=-1,pending_dir;
+static celebration_t entrances[3];
+static bool fish_seen[3],parade_seen[MINI_PARADE_COUNT];
 static uint32_t scene_seed;
 static float bubble_x[2],bubble_y[2],next_bubble;
 static bool bubble_active[2];
@@ -50,9 +53,10 @@ static void text_parade(const char *s,int x,int y,uint16_t c){
             if(mini_font[n*5+col*2/3]&(1<<(row*2/3)))pixel(x+i*MINI_PARADE_NAME_ADVANCE+col,y+row,c);}
 }
 static float rnd(void){return (float)(esp_random()&65535)/65536.0f;}
-static void spawn(int slot,int index,int dir,float x,float y){fish[slot]=(swimmer_t){.art=(index&~1)+(dir<0),.dir=dir,.x=x,.y=y,.speed=9+rnd()*9,.phase=rnd()*6.28f,.active=true};}
+static void spawn(int slot,int index,int dir,float x,float y){fish_seen[slot]=false;fish[slot]=(swimmer_t){.art=(index&~1)+(dir<0),.dir=dir,.x=x,.y=y,.speed=9+rnd()*9,.phase=rnd()*6.28f,.active=true};}
 static int free_y(int art);
 static void new_world(void){
+    memset(entrances,0,sizeof(entrances));memset(fish_seen,0,sizeof(fish_seen));
     scene_seed=esp_random();time_s=rnd()*270;pending_art=-1;parade_active=false;parade_elapsed=0;memset(fish,0,sizeof(fish));
     for(int slot=0;slot<3;slot++){
         int first=esp_random()%(MINI_SPRITE_COUNT/2),band=(MINI_SWIM_BOTTOM-MINI_SWIM_TOP)/3;
@@ -66,7 +70,7 @@ static void new_world(void){
     }
     memset(bubble_active,0,sizeof(bubble_active));next_bubble=time_s+5+rnd()*5;paused=false;
 }
-static void toggle_parade(void){parade_active=!parade_active;parade_elapsed=0;if(parade_active)mini_parade_init(&parade_plan);}
+static void toggle_parade(void){memset(entrances,0,sizeof(entrances));memset(parade_seen,0,sizeof(parade_seen));parade_active=!parade_active;parade_elapsed=0;if(parade_active)mini_parade_init(&parade_plan);}
 static int free_y(int art){
     const mini_sprite_t *s=&mini_sprites[art];int height=s->height*8;
     if(s->bottom){int y=MINI_SWIM_BOTTOM+4-height;if(y<scene_arrival_top())return -1;
@@ -81,9 +85,32 @@ static int free_y(int art){
     }
     return chosen;
 }
+static void entrance_start(int art,float x,float y,int dir,bool *seen){
+    const mini_sprite_t *s=&mini_sprites[art];int kind=celebration_kind(s->name);
+    if(*seen||kind<0||x+s->width*6<=18||x>=302)return;
+    *seen=true;int slot=0;for(int i=0;i<3;i++)if(!entrances[i].active||entrances[i].age>entrances[slot].age)slot=i;
+    entrances[slot]=(celebration_t){.active=true,.kind=kind,.x=fminf(276,fmaxf(44,dir>0?x+s->width*6:x)),.y=fminf(268,fmaxf(52,y+s->height*4)),.age=0};
+}
+static void advance_entrances(float dt){
+    for(int i=0;i<3;i++)if(entrances[i].active){entrances[i].age+=dt;if(entrances[i].age>=3)entrances[i].active=false;}
+    if(parade_active){for(int i=0;i<MINI_PARADE_COUNT;i++)if(mini_parade_visible(&parade_plan,parade_elapsed,i)){
+        int art=parade_plan.order[i]*2;entrance_start(art,mini_parade_x(&parade_plan,parade_elapsed,i,mini_sprites[art].width*6),mini_parade_y(i,mini_sprites[art].height*8),1,&parade_seen[i]);}}
+    else for(int i=0;i<3;i++)if(fish[i].active)entrance_start(fish[i].art,fish[i].x,fish[i].y,fish[i].dir,&fish_seen[i]);
+}
+static bool entrance_clear(int x,int y){
+    if(x<12||x+3>=308||y<22||y+3>=286)return false;
+    if(parade_active){for(int i=0;i<MINI_PARADE_COUNT;i++)if(mini_parade_visible(&parade_plan,parade_elapsed,i)){
+        const mini_sprite_t *s=&mini_sprites[parade_plan.order[i]*2];float fx=mini_parade_x(&parade_plan,parade_elapsed,i,s->width*6),fy=mini_parade_y(i,s->height*8);
+        if(x+3>=fx-3&&x<=fx+s->width*6+3&&y+3>=fy-3&&y<=fy+s->height*8+3)return false;}}
+    else for(int i=0;i<3;i++)if(fish[i].active){const swimmer_t *f=&fish[i];const mini_sprite_t *s=&mini_sprites[f->art];
+        if(x+3>=f->x-3&&x<=f->x+s->width*6+3&&y+3>=f->y-3&&y<=f->y+s->height*8+3)return false;}
+    return true;
+}
+static void draw_entrances(void){for(int i=0;i<3;i++)if(entrances[i].active)for(int n=0;n<20;n++){
+    int x,y,size;unsigned color;if(celebration_point(&entrances[i],n,&x,&y,&size,&color)&&entrance_clear(x,y)){rect(x,y,size,size,rgb(color));if(size==2){rect(x-1,y+1,4,1,rgb(color));rect(x+1,y-1,1,4,rgb(color));}}}}
 static void simulate(float dt){
     if(paused)return;
-    if(parade_active){parade_elapsed+=dt;if(parade_elapsed>=parade_plan.duration)parade_active=false;return;}
+    if(parade_active){parade_elapsed+=dt;advance_entrances(dt);if(parade_elapsed>=parade_plan.duration){parade_active=false;memset(entrances,0,sizeof(entrances));}return;}
     time_s+=dt;
     for(int i=0;i<3;i++){
         swimmer_t *f=&fish[i];if(!f->active)continue;f->x+=f->dir*f->speed*dt;const mini_sprite_t *s=&mini_sprites[f->art];
@@ -95,6 +122,7 @@ static void simulate(float dt){
         if(y>=0){spawn(i,pending_art,pending_dir,pending_dir>0?-a->width*6-2:322,y);pending_art=-1;}
         break;
     }
+    advance_entrances(dt);
     if(time_s>=next_bubble){
         for(int b=0;b<2;b++)if(!bubble_active[b]){
             int emitter=esp_random()%3;swimmer_t *f=&fish[emitter];
@@ -172,6 +200,7 @@ static void draw_ocean(bool controls){
     if(!parade_active){draw_scene_landmarks(scroll);draw_scene_surface();
         for(int i=0;i<2;i++)if(bubble_active[i])glyph(bubble_y[i]<scene_water_top()+20?'.':'o',bubble_x[i],bubble_y[i],muted);
     }
+    draw_entrances();
     if(parade_active){for(int slot=0;slot<MINI_PARADE_COUNT;slot++)if(mini_parade_visible(&parade_plan,parade_elapsed,slot)){int art=parade_plan.order[slot]*2;const mini_sprite_t *s=&mini_sprites[art];draw_swimmer(art,mini_parade_x(&parade_plan,parade_elapsed,slot,s->width*6),mini_parade_y(slot,s->height*8),parade_elapsed,0);}}
     else for(int i=0;i<3;i++){swimmer_t *f=&fish[i];if(f->active)draw_swimmer(f->art,f->x,f->y,time_s,f->phase);}
     if(controls){rect(0,288,320,32,rgb(0x102631));text(paused?"RESUME":"PAUSE",34,301,pale);text("NEW WORLD",96,301,pale);text(parade_active?"RETURN":"PARADE",179,301,pale);text("SETTINGS",247,301,pale);}
