@@ -13,7 +13,7 @@ Put the board on a dry, nonconductive surface. Use a known USB data cable connec
 ## 2. Download the right file
 
 1. Open [ASCII Genesis - Mid releases](https://github.com/Mikepyt87/ascii-genesis-mid/releases).
-2. Choose the highest **numbered** release, currently [mid-v0.1.10](https://github.com/Mikepyt87/ascii-genesis-mid/releases/tag/mid-v0.1.10). Release-list order is not always version order.
+2. Choose the highest **numbered** release, currently [mid-v0.1.11](https://github.com/Mikepyt87/ascii-genesis-mid/releases/tag/mid-v0.1.11). Release-list order is not always version order.
 3. Expand **Assets** if necessary.
 4. Download **ascii-genesis-mid-usb.bin**. This is the complete first-install image.
 5. Create `ASCII-Genesis-Mid` inside your Windows Downloads folder and put the file there. Check that the filename is exactly `ascii-genesis-mid-usb.bin`, without a second `.bin` or a download suffix.

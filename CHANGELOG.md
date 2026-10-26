@@ -1,5 +1,11 @@
 # Changes
 
+## 0.1.11
+
+- Moves signature celebrations around the whole fish, following its body with a clear gap instead of emitting particles from its nose.
+- Waits until the complete drawing is visible, then surrounds it with teal, gold, or violet/orange stars for three seconds.
+- Preserves private Mini profiles, fish speeds, safe screen margins, pause behavior, and once-per-crossing timing.
+
 ## 0.1.10
 
 - Adds Balance Angelfish, Steadfast Marlin, and Spark Wrasse to the normal ocean and parade (31 designs).
